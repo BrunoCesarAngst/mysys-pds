@@ -1,4 +1,7 @@
 {
+  "splash": {
+    "image": "./assets/splash.png"
+  },
   "expo": {
     "name": "mySys",
     "slug": "mySys",
