@@ -1,5 +1,4 @@
 import React from "react"
-import { Feather } from "@expo/vector-icons"
 
 import {
   Container,
@@ -12,8 +11,11 @@ import {
   UserName,
   Icon,
   HighlightCards,
+  Inbox,
+  Title,
 } from "./styles"
 import { HighlightCard } from "../../component/HighlightCard"
+import { StuffCard } from "../../component/StuffCard"
 
 export function Dashboard() {
   return (
@@ -55,6 +57,11 @@ export function Dashboard() {
           lastInput="Talk to Ellon"
         />
       </HighlightCards>
+
+      <Inbox>
+        <Title>Inbox</Title>
+        <StuffCard />
+      </Inbox>
     </Container>
   )
 }

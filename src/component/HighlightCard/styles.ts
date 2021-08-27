@@ -32,7 +32,7 @@ export const Title = styled.Text<TypeProps>`
 `
 
 export const Icon = styled(Feather)<TypeProps>`
-  font-size: ${RFValue(38)}px;
+  font-size: ${RFValue(35)}px;
 
   ${({ type }) =>
     type === "input" &&
@@ -56,7 +56,7 @@ export const Icon = styled(Feather)<TypeProps>`
 export const Footer = styled.View``
 
 export const Amount = styled.Text<TypeProps>`
-  margin-top: 12px;
+  margin-top: 7px;
   font-family: ${({ theme }) => theme.fonts.medium};
   font-size: ${RFValue(32)}px;
 
