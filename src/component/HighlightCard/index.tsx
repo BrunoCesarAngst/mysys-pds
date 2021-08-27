@@ -10,17 +10,30 @@ import {
   LastInput,
 } from "./styles"
 
-export function HighlightCard() {
+interface Props {
+  title: string
+  type: "input" | "demand" | "done"
+  amount: string
+  lastInput: string
+}
+
+const iconOfCard = {
+  input: "download",
+  demand: "target",
+  done: "thumbs-up",
+}
+
+export function HighlightCard({ title, type, amount, lastInput }: Props) {
   return (
-    <Container>
+    <Container type={type}>
       <Header>
-        <Title>Entradas</Title>
-        <Icon name="inbox-arrow-down" />
+        <Title type={type}>{title}</Title>
+        <Icon name={iconOfCard[type]} type={type} />
       </Header>
 
       <Footer>
-        <Amount>25</Amount>
-        <LastInput>Last input: Fueling the car</LastInput>
+        <Amount type={type}>{amount}</Amount>
+        <LastInput type={type}>{lastInput}</LastInput>
       </Footer>
     </Container>
   )

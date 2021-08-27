@@ -27,7 +27,7 @@ export function Dashboard() {
               }}
             />
             <User>
-              <UserGreeting>Olá,</UserGreeting>
+              <UserGreeting>Hi,</UserGreeting>
               <UserName>Bruno</UserName>
             </User>
           </UserInfo>
@@ -36,9 +36,24 @@ export function Dashboard() {
       </Header>
 
       <HighlightCards>
-        <HighlightCard />
-        <HighlightCard />
-        <HighlightCard />
+        <HighlightCard
+          type="input"
+          title="Entries"
+          amount="15"
+          lastInput="Go to Market"
+        />
+        <HighlightCard
+          type="demand"
+          title="Demands"
+          amount="95"
+          lastInput="Study pointers"
+        />
+        <HighlightCard
+          type="done"
+          title="Concluded"
+          amount="37"
+          lastInput="Talk to Ellon"
+        />
       </HighlightCards>
     </Container>
   )

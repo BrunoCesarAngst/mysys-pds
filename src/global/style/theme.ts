@@ -1,8 +1,8 @@
 export default {
   colors: {
-    primary: "#b5bd89",
+    primary: "#847577",
 
-    secondary: "#E5E6E4",
+    secondary: "#FBFBF2",
     secondary_light: "rgb(229, 230, 228, 0.3)",
 
     success: "#619b8a",
@@ -12,10 +12,10 @@ export default {
     attention_light: "rgb(237, 106, 90, 0.5)",
 
     shape: "#FFFFFF",
-    title: "#847577",
+    title: "#b5bd89",
     text: "#000000",
     text_light: "#A6A2A2",
-    background: "#FBFBF2",
+    background: "#E5E6E4",
   },
 
   fonts: {
