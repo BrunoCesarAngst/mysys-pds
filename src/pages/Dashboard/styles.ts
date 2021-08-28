@@ -1,7 +1,12 @@
-import { Feather } from "@expo/vector-icons"
-import { getStatusBarHeight } from "react-native-iphone-x-helper"
-import { RFPercentage, RFValue } from "react-native-responsive-fontsize"
 import styled from "styled-components/native"
+import { Feather } from "@expo/vector-icons"
+import { FlatList } from "react-native"
+import {
+  getBottomSpace,
+  getStatusBarHeight,
+} from "react-native-iphone-x-helper"
+import { RFPercentage, RFValue } from "react-native-responsive-fontsize"
+import { DataInboxList } from "."
 
 export const Container = styled.View`
   flex: 1;
@@ -89,3 +94,11 @@ export const Title = styled.Text`
 
   margin-bottom: 10px;
 `
+export const InboxList = styled(
+  FlatList as new () => FlatList<DataInboxList>
+).attrs({
+  showsVerticalScrollIndicator: false,
+  contentContainerStyle: {
+    paddingBottom: getBottomSpace(),
+  },
+})``

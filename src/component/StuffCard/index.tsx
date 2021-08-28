@@ -2,16 +2,27 @@ import React from "react"
 
 import { Container, Header, Title, Date, Description } from "./styles"
 
-export function StuffCard() {
+export interface DataStuffCardData {
+  type: "inAdvance" | "late"
+  title: string
+  date: string
+  description: string
+}
+interface Props {
+  data: DataStuffCardData
+}
+
+export function StuffCard({ data }: Props) {
   return (
     <Container>
-      <Header>
-        <Title>Read about i18n in RN</Title>
+      <Title type={data.type}>
+        {data.type === "late" && "* "}
+        {data.title}
+      </Title>
 
-        <Date>15/09/21</Date>
-      </Header>
+      <Description>{data.description}</Description>
 
-      <Description>I will apply this function in my application.</Description>
+      <Date>{data.date}</Date>
     </Container>
   )
 }

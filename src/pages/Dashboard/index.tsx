@@ -13,11 +13,54 @@ import {
   HighlightCards,
   Inbox,
   Title,
+  InboxList,
 } from "./styles"
 import { HighlightCard } from "../../component/HighlightCard"
-import { StuffCard } from "../../component/StuffCard"
+import { DataStuffCardData, StuffCard } from "../../component/StuffCard"
+
+export interface DataInboxList extends DataStuffCardData {
+  id: string
+}
 
 export function Dashboard() {
+  const data: DataInboxList[] = [
+    {
+      id: "1",
+      type: "late",
+      title: "Write the PDS article",
+      date: "28/07/21",
+      description: "",
+    },
+    {
+      id: "2",
+      type: "late",
+      title: "Scientific basis PDS",
+      date: "15/08/21",
+      description: "Search for the scientific basis for the PDS",
+    },
+    {
+      id: "3",
+      type: "inAdvance",
+      title: "Read about i18n in RN",
+      date: "15/09/21",
+      description: "",
+    },
+    {
+      id: "4",
+      type: "inAdvance",
+      title: "Read about i18n in RN",
+      date: "15/09/21",
+      description: "I will this function in my application",
+    },
+    {
+      id: "5",
+      type: "inAdvance",
+      title: "Read about i18n in RN",
+      date: "15/09/21",
+      description: "I will this function in my application",
+    },
+  ]
+
   return (
     <Container>
       <Header>
@@ -60,7 +103,12 @@ export function Dashboard() {
 
       <Inbox>
         <Title>Inbox</Title>
-        <StuffCard />
+
+        <InboxList
+          data={data}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <StuffCard data={item} />}
+        />
       </Inbox>
     </Container>
   )
