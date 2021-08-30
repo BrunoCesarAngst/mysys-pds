@@ -1,5 +1,6 @@
 import React from "react"
-import { LogBox } from "react-native"
+import { NavigationContainer } from "@react-navigation/native"
+import { LogBox, StatusBar } from "react-native"
 import { ThemeProvider } from "styled-components"
 import AppLoading from "expo-app-loading"
 import {
@@ -10,15 +11,9 @@ import {
 } from "@expo-google-fonts/poppins"
 
 import theme from "./src/global/style/theme"
-// import { Dashboard } from "./src/pages/Dashboard"
-import { CollectStuff } from "./src/pages/CollectStuff"
-// import { Login } from "./src/pages/Login"
-// import { Home } from "./src/pages/Home"
-// import { Welcome } from "./src/pages/Welcome"
+import { AppRoutes } from "./src/routes/app.routes"
 
 export default function App() {
-  LogBox.ignoreLogs(["Setting a timer for a long period of time"])
-
   const [fontsLoaded] = useFonts({
     Poppins_200ExtraLight,
     Poppins_400Regular,
@@ -31,7 +26,10 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <CollectStuff />
+      <NavigationContainer>
+        <AppRoutes />
+      </NavigationContainer>
+      <StatusBar translucent backgroundColor={"transparent"} />
     </ThemeProvider>
   )
 }

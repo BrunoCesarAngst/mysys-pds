@@ -14,6 +14,7 @@ import {
   Inbox,
   Title,
   InboxList,
+  LogoutButton,
 } from "./styles"
 import { HighlightCard } from "../../component/HighlightCard"
 import { DataStuffCardData, StuffCard } from "../../component/StuffCard"
@@ -76,7 +77,9 @@ export function Dashboard() {
               <UserName>Bruno</UserName>
             </User>
           </UserInfo>
-          <Icon name="power" />
+          <LogoutButton onPress={() => {}}>
+            <Icon name="power" />
+          </LogoutButton>
         </UserWrapper>
       </Header>
 

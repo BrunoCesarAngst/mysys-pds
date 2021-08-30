@@ -7,6 +7,7 @@ import {
 } from "react-native-iphone-x-helper"
 import { RFPercentage, RFValue } from "react-native-responsive-fontsize"
 import { DataInboxList } from "."
+import { BorderlessButton } from "react-native-gesture-handler"
 
 export const Container = styled.View`
   flex: 1;
@@ -69,6 +70,8 @@ export const Icon = styled(Feather)`
   color: ${({ theme }) => theme.colors.attention};
   font-size: ${RFValue(24)}px;
 `
+
+export const LogoutButton = styled(BorderlessButton)``
 
 export const HighlightCards = styled.ScrollView.attrs({
   horizontal: true,
