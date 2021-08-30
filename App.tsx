@@ -10,8 +10,9 @@ import {
 } from "@expo-google-fonts/poppins"
 
 import theme from "./src/global/style/theme"
-import { Dashboard } from "./src/pages/Dashboard"
-import { Login } from "./src/pages/Login"
+// import { Dashboard } from "./src/pages/Dashboard"
+import { CollectStuff } from "./src/pages/CollectStuff"
+// import { Login } from "./src/pages/Login"
 // import { Home } from "./src/pages/Home"
 // import { Welcome } from "./src/pages/Welcome"
 
@@ -30,7 +31,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <Dashboard />
+      <CollectStuff />
     </ThemeProvider>
   )
 }
