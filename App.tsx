@@ -29,7 +29,6 @@ export default function App() {
       <NavigationContainer>
         <AppRoutes />
       </NavigationContainer>
-      <StatusBar translucent backgroundColor={"transparent"} />
     </ThemeProvider>
   )
 }

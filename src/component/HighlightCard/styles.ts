@@ -13,8 +13,8 @@ export const Container = styled.View<TypeProps>`
   width: ${RFValue(300)}px;
   border-radius: 7px;
 
-  padding: 19px 23px;
-  padding-bottom: ${RFValue(42)}px;
+  padding: 9px 19px;
+  padding-bottom: ${RFValue(31)}px;
   margin-right: 15px;
 `
 

@@ -16,7 +16,7 @@ export const Container = styled.View`
 
 export const Header = styled.View`
   width: 100%;
-  height: ${RFPercentage(40)}px;
+  height: ${RFPercentage(33)}px;
 
   background-color: ${({ theme }) => theme.colors.primary};
 
@@ -29,7 +29,7 @@ export const UserWrapper = styled.View`
   width: 100%;
 
   padding: 0 24px;
-  margin-top: ${getStatusBarHeight() + RFValue(28)}px;
+  margin-top: ${getStatusBarHeight() + RFValue(17)}px;
 
   flex-direction: row;
   justify-content: space-between;
@@ -82,7 +82,7 @@ export const HighlightCards = styled.ScrollView.attrs({
 
   position: absolute;
 
-  margin-top: ${RFPercentage(20)}px;
+  margin-top: ${RFPercentage(17)}px;
 `
 export const Inbox = styled.View`
   flex: 1;

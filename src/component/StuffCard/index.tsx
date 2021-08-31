@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Container, Header, Title, Date, Description } from "./styles"
+import { Container, Title, Date, Description } from "./styles"
 
 export interface DataStuffCardData {
   type: "inAdvance" | "late"

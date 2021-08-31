@@ -6,7 +6,6 @@ import { MaterialIcons } from "@expo/vector-icons"
 import { Dashboard } from "../pages/Dashboard"
 import { CollectStuff } from "../pages/CollectStuff"
 import { useTheme } from "styled-components"
-// const { Tab.Navigator, Tab.Screen } = createBottomTabNavigator()
 const Tab = createBottomTabNavigator()
 
 export function AppRoutes() {
@@ -19,6 +18,7 @@ export function AppRoutes() {
         tabBarActiveTintColor: theme.colors.primary,
         tabBarInactiveTintColor: theme.colors.text_light,
         tabBarLabelPosition: "beside-icon",
+        tabBarItemStyle: {},
         tabBarStyle: {
           paddingVertical: Platform.OS === "ios" ? 20 : 0,
           height: 70,
@@ -50,19 +50,6 @@ export function AppRoutes() {
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons
               name="format-list-numbered"
-              size={size}
-              color={color}
-            />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Run"
-        component={CollectStuff}
-        options={{
-          tabBarIcon: ({ size, color }) => (
-            <MaterialIcons
-              name="miscellaneous-services"
               size={size}
               color={color}
             />
