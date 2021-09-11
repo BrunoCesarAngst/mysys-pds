@@ -1,6 +1,9 @@
+import "react-native-gesture-handler"
+import "intl"
+import "intl/locale-data/jsonp/pt-BR"
+
 import React from "react"
 import { NavigationContainer } from "@react-navigation/native"
-import { LogBox, StatusBar } from "react-native"
 import { ThemeProvider } from "styled-components"
 import AppLoading from "expo-app-loading"
 import {
@@ -11,6 +14,8 @@ import {
 } from "@expo-google-fonts/poppins"
 
 import theme from "./src/global/style/theme"
+import { SignIn } from "./src/pages/SignIn"
+import { AuthProvider } from "./src/hooks/auth"
 import { AppRoutes } from "./src/routes/app.routes"
 
 export default function App() {
@@ -28,6 +33,9 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <NavigationContainer>
         <AppRoutes />
+        {/* <AuthProvider>
+          <SignIn />
+        </AuthProvider> */}
       </NavigationContainer>
     </ThemeProvider>
   )

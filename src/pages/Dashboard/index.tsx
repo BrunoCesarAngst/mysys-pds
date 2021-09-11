@@ -1,4 +1,5 @@
-import React from "react"
+import React, { useState, useEffect, useCallback } from "react"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 import {
   Container,
@@ -18,49 +19,76 @@ import {
 } from "./styles"
 import { HighlightCard } from "../../component/HighlightCard"
 import { DataStuffCardData, StuffCard } from "../../component/StuffCard"
+import { useFocusEffect } from "@react-navigation/core"
+import { TouchableOpacity } from "react-native-gesture-handler"
+import { useNavigation } from "@react-navigation/native"
+import { RouteProp } from "@react-navigation/native"
 
 export interface DataInboxList extends DataStuffCardData {
   id: string
 }
 
 export function Dashboard() {
-  const data: DataInboxList[] = [
-    {
-      id: "1",
-      type: "late",
-      title: "Write the PDS article",
-      date: "28/07/21",
-      description: "",
-    },
-    {
-      id: "2",
-      type: "late",
-      title: "Scientific basis PDS",
-      date: "15/08/21",
-      description: "Search for the scientific basis for the PDS",
-    },
-    {
-      id: "3",
-      type: "inAdvance",
-      title: "Read about i18n in RN",
-      date: "15/09/21",
-      description: "",
-    },
-    {
-      id: "4",
-      type: "inAdvance",
-      title: "Read about i18n in RN",
-      date: "15/09/21",
-      description: "I will this function in my application",
-    },
-    {
-      id: "5",
-      type: "inAdvance",
-      title: "Read about i18n in RN",
-      date: "15/09/21",
-      description: "I will this function in my application",
-    },
-  ]
+  const [data, setData] = useState<DataInboxList[]>([])
+  const [currentDate, setCurrentDate] = useState("")
+
+  const navigation = useNavigation()
+
+  async function loadStuffs() {
+    const stuffsCollectedOnTheDeviceKey = "@mysys:stuffs"
+
+    const response = await AsyncStorage.getItem(stuffsCollectedOnTheDeviceKey)
+
+    const collectedStuffs = response ? JSON.parse(response) : []
+
+    let stuffInInbox = 0
+
+    const collectedStuffsFormatted: DataInboxList[] = collectedStuffs.map(
+      (item: DataInboxList) => {
+        stuffInInbox++
+
+        const date = Intl.DateTimeFormat("pt-BR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "2-digit",
+        }).format(new Date(item.date))
+
+        return {
+          id: item.id,
+          type: item.type,
+          title: item.title,
+          description: item.description,
+          date,
+        }
+      }
+    )
+
+    setData(collectedStuffsFormatted)
+    console.log(collectedStuffsFormatted)
+  }
+  useEffect(() => {
+    let currentTime = new Intl.DateTimeFormat("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+    }).format()
+
+    // console.log(
+    //   new Intl.DateTimeFormat("en-US", {
+    //     hour: "numeric",
+    //     minute: "numeric",
+    //   }).format()
+    // )
+    // setCurrentDate(currentTime)
+    // console.log(currentTime)
+
+    loadStuffs()
+  }, [])
+
+  useFocusEffect(
+    useCallback(() => {
+      loadStuffs()
+    }, [])
+  )
 
   return (
     <Container>
@@ -110,7 +138,20 @@ export function Dashboard() {
         <InboxList
           data={data}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <StuffCard data={item} />}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => {
+                console.log(item.id)
+                navigation.navigate("Collect", {
+                  id: item.id,
+                  title: item.title,
+                  description: item.description,
+                })
+              }}
+            >
+              <StuffCard data={item} />
+            </TouchableOpacity>
+          )}
         />
       </Inbox>
     </Container>
