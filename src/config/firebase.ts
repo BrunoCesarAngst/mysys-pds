@@ -1,27 +1,37 @@
 import firebase from "firebase/app"
 
 // Optionally import the services that you want to use
-import "firebase/auth";
+import "firebase/auth"
 //import "firebase/database";
-import "firebase/firestore";
+import "firebase/firestore"
 //import "firebase/functions";
 // import "firebase/storage"
 
+import {
+  APIKEY,
+  AUTHDOMAIM,
+  APPID,
+  MEASUREMENTID,
+  MESSAGINGSENDERID,
+  PROJECTID,
+  STORAGEBUCKET,
+} from "@env"
+
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyA1EYzj4lzIkP6nwDcXH6kqbN5Wxzy_OjQ",
-  authDomain: "mysys-pds.firebaseapp.com",
-  projectId: "mysys-pds",
-  storageBucket: "mysys-pds.appspot.com",
-  messagingSenderId: "738836908485",
-  appId: "1:738836908485:web:e2a6898cfb6b10f65163ac",
-  measurementId: "G-ZDVE8MMCLK",
+  apiKey: APIKEY,
+  authDomain: AUTHDOMAIM,
+  projectId: PROJECTID,
+  storageBucket: STORAGEBUCKET,
+  messagingSenderId: MESSAGINGSENDERID,
+  appId: APPID,
+  measurementId: MEASUREMENTID,
 }
 
 if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig)
 }
 
 export const db = firebase.firestore()
 
-export { firebase };
+export { firebase }

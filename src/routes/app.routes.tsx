@@ -6,7 +6,9 @@ import { MaterialIcons } from "@expo/vector-icons"
 import { Dashboard } from "../pages/Dashboard"
 import { CollectStuff } from "../pages/CollectStuff"
 import { useTheme } from "styled-components"
-const Tab = createBottomTabNavigator()
+import { AppNavigatorParamsList } from "./types"
+import { Listing } from "../pages/Listing"
+const Tab = createBottomTabNavigator<AppNavigatorParamsList>()
 
 export function AppRoutes() {
   const theme = useTheme()
@@ -26,7 +28,7 @@ export function AppRoutes() {
       }}
     >
       <Tab.Screen
-        name="Inbox"
+        name="Dashboard"
         component={Dashboard}
         options={{
           tabBarIcon: ({ size, color }) => (
@@ -45,7 +47,7 @@ export function AppRoutes() {
       />
       <Tab.Screen
         name="Listing"
-        component={CollectStuff}
+        component={Listing}
         options={{
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons

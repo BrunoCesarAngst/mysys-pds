@@ -3,10 +3,10 @@ import React from "react"
 import { Container, Title, Date, Description } from "./styles"
 
 export interface DataStuffCardData {
-  type: "inAdvance" | "late"
   title: string
-  date: string
   description: string
+  date: string
+  update: string
 }
 interface Props {
   data: DataStuffCardData
@@ -15,14 +15,13 @@ interface Props {
 export function StuffCard({ data }: Props) {
   return (
     <Container>
-      <Title type={data.type}>
-        {data.type === "late" && "* "}
-        {data.title}
-      </Title>
+      <Title>{data.title}</Title>
 
       <Description>{data.description}</Description>
 
-      <Date>{data.date}</Date>
+      <Date>
+        {data.date} ~ {data.update}
+      </Date>
     </Container>
   )
 }

@@ -1,9 +1,9 @@
 import { RFValue } from "react-native-responsive-fontsize"
 import styled from "styled-components/native"
 
-interface InboxPropsType {
-  type: "inAdvance" | "late"
-}
+// interface InboxPropsType {
+//   type: "inAdvance" | "late"
+// }
 
 export const Container = styled.View`
   background-color: ${({ theme }) => theme.colors.shape};
@@ -22,11 +22,10 @@ export const Header = styled.View`
   margin-bottom: 9px;
 `
 
-export const Title = styled.Text<InboxPropsType>`
+export const Title = styled.Text`
   font-family: ${({ theme }) => theme.fonts.medium};
   font-size: ${RFValue(14)}px;
-  color: ${({ theme, type }) =>
-    type === "inAdvance" ? theme.colors.success : theme.colors.attention};
+  color: ${({ theme }) => theme.colors.text};
 `
 
 export const Date = styled.Text`

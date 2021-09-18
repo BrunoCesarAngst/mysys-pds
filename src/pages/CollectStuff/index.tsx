@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useCallback } from "react"
+import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/core"
+import { format } from "date-fns"
+
+import { db } from "../../config/firebase"
+
 import { Alert, Keyboard, TouchableWithoutFeedback } from "react-native"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
-import AsyncStorage from "@react-native-async-storage/async-storage"
-import uuid from "react-native-uuid"
 
 import { useForm } from "react-hook-form"
 import { NavigationStackProp } from "react-navigation-stack"
@@ -12,32 +15,56 @@ import { useNavigation } from "@react-navigation/native"
 import { Button } from "../../component/Form/Button"
 import { InputForm } from "../../component/Form/InputForm"
 import { Container, Header, Title, Form, Fields } from "./styles"
+import { StackNavigationProp } from "@react-navigation/stack"
+import { AppNavigatorParamsList } from "../../routes/types"
 
-interface ICollectStuff {
-  route: NavigationStackProp<any, any>
-}
+type CollectStuffScreenNavigationProps = StackNavigationProp<
+  AppNavigatorParamsList,
+  "Collect"
+>
+
+type CollectStuffRoutProps = RouteProp<AppNavigatorParamsList, "Collect">
 
 interface CollectionFormData {
+  id: string
   title: string
   description: string
+  date: string
+  update: string
 }
 
 const schema = yup.object().shape({
   title: yup.string().required("The title must be reported."),
   description: yup.string(),
 })
-export function CollectStuff({ route }: ICollectStuff) {
-  const [validity, setValidity] = useState("")
+export function CollectStuff() {
+  const [stuffs, setStuffs] = useState<CollectionFormData[]>([])
 
-  const navigation = useNavigation()
+  useEffect(() => {
+    db.collection("stuffs").onSnapshot((query) => {
+      const list: any[] = []
+      query.forEach((doc) => {
+        list.push({ ...doc.data(), id: doc.id })
+      })
 
-  console.log("no form", route.params?.id)
-  console.log("no form", route.params?.title)
-  console.log("no form", route.params?.description)
+      setStuffs(list)
+    })
+  }, [])
 
-  const idStuff = route.params?.id
+  useFocusEffect(
+    useCallback(() => {
+      reset()
+    }, [])
+  )
+
+  const route = useRoute<CollectStuffRoutProps>()
+
+  const navigation = useNavigation<CollectStuffScreenNavigationProps>()
+
+  const idStuff = route.params?.idStuff
   const title = route.params?.title
   const description = route.params?.description
+  // const date = route.params?.date
 
   const {
     control,
@@ -48,92 +75,143 @@ export function CollectStuff({ route }: ICollectStuff) {
     resolver: yupResolver(schema),
   })
 
-  function validityControl(type: "inAdvance" | "late") {
-    setValidity(type)
-  }
-
-  async function handleEditionStuff(params: type) {}
-
-  async function handleCollecting(form: CollectionFormData) {
-    const newStuffs = {
-      id: String(uuid.v4()),
-      title: form.title,
-      description: form.description,
-      date: new Date(),
-    }
-
+  async function collectAStuff(form: CollectionFormData) {
     try {
-      const stuffsCollectedOnTheDeviceKey = "@mysys:stuffs"
+      const date = format(new Date(), "dd/MM/yy - HH:mm")
 
-      const stuffsSavedInTheDevice = await AsyncStorage.getItem(
-        stuffsCollectedOnTheDeviceKey
-      )
-      const currentData = stuffsSavedInTheDevice
-        ? JSON.parse(stuffsSavedInTheDevice)
-        : []
+      await db.collection("stuffs").add({
+        title: form.title,
+        description: form.description,
+        date: date,
+        update: date,
+      })
 
-      const dataFormatted = [...currentData, newStuffs]
+      navigation.setParams({
+        idStuff: undefined,
+        title: undefined,
+        description: undefined,
+      })
 
-      await AsyncStorage.setItem(
-        stuffsCollectedOnTheDeviceKey,
-        JSON.stringify(dataFormatted)
-      )
-
-      reset()
-
-      navigation.navigate("Inbox")
+      navigation.navigate("Dashboard")
     } catch (error) {
       console.log(error)
       Alert.alert("Não deu!")
     }
   }
 
-  // useEffect(() => {
-  //   const stuffsCollectedOnTheDeviceKey = "@mysys:stuffs"
-  //   // async function loadData() {
-  //   //   const data = await AsyncStorage.getItem(stuffsCollectedOnTheDeviceKey)
-  //   //   console.log(JSON.parse(data!))
-  //   // }
-  //   // loadData()
+  async function handleCollecting(form: CollectionFormData) {
+    try {
+      const date = format(new Date(), "dd/MM/yy - HH:mm")
 
-  //   async function removeAll() {
-  //     await AsyncStorage.removeItem(stuffsCollectedOnTheDeviceKey)
-  //   }
+      const selectedStuff = stuffs.find((stuff) => stuff.id === idStuff)
+      if (selectedStuff) {
+        await db.collection("stuffs").doc(selectedStuff.id).set({
+          id: selectedStuff.id,
+          title: form.title,
+          description: form.description,
+          date: selectedStuff.date,
+          update: date,
+        })
+      } else {
+        Alert.alert("Essa stuff não existe")
+      }
 
-  //   removeAll()
-  // }, [])
+      Alert.alert(
+        form.title,
+        "Want to clarify this entry?",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          { text: "OK", onPress: () => console.log("OK Pressed") },
+        ],
+        { cancelable: false }
+      )
 
-  return (
-    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <Container>
-        <Header>
-          <Title>Collecting Stuff</Title>
-        </Header>
+      navigation.setParams({
+        idStuff: undefined,
+        title: undefined,
+        description: undefined,
+      })
 
-        <Form>
-          <Fields>
-            <InputForm
-              name="title"
-              control={control}
-              placeholder="Title"
-              defaultValue={title}
-              autoCapitalize="sentences"
-              autoCorrect={false}
-              errorForm={errors.title && errors.title.message}
-            />
+      navigation.navigate("Dashboard")
+    } catch (error) {
+      console.log(error)
+      Alert.alert("Não deu!")
+    }
+  }
 
-            <InputForm
-              name="description"
-              control={control}
-              placeholder="Description"
-              defaultValue={description}
-              errorForm={errors.description && errors.description.message}
-            />
-          </Fields>
+  function NewStuff() {
+    return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Container>
+          <Header>
+            <Title>Collecting Stuff</Title>
+          </Header>
 
-          <Button title="Collect" onPress={handleSubmit(handleCollecting)} />
-        </Form>
-      </Container>
-    </TouchableWithoutFeedback>
-  )
+          <Form>
+            <Fields>
+              <InputForm
+                name="title"
+                control={control}
+                placeholder="Title"
+                autoCapitalize="sentences"
+                autoCorrect={false}
+                errorForm={errors.title && errors.title.message}
+              />
+
+              <InputForm
+                name="description"
+                control={control}
+                placeholder="Description"
+                errorForm={errors.description && errors.description.message}
+              />
+            </Fields>
+
+            <Button title="Collect" onPress={handleSubmit(collectAStuff)} />
+          </Form>
+        </Container>
+      </TouchableWithoutFeedback>
+    )
+  }
+
+  function EditStuff() {
+    return (
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <Container>
+          <Header>
+            <Title>Editing Stuff</Title>
+          </Header>
+
+          <Form>
+            <Fields>
+              <InputForm
+                name="title"
+                defaultValue={title}
+                control={control}
+                placeholder="Title"
+                autoCapitalize="sentences"
+                autoCorrect={false}
+                errorForm={errors.title && errors.title.message}
+              />
+
+              <InputForm
+                name="description"
+                defaultValue={description}
+                control={control}
+                placeholder="Description"
+                errorForm={errors.description && errors.description.message}
+              />
+            </Fields>
+
+            <Button title="Edit" onPress={handleSubmit(handleCollecting)} />
+          </Form>
+        </Container>
+      </TouchableWithoutFeedback>
+    )
+  }
+
+  return <>{idStuff ? <EditStuff /> : <NewStuff />}</>
 }
