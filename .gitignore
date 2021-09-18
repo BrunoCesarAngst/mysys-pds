@@ -3,6 +3,8 @@
 .DS_Store
 nohup.out
 
+.env
+
 # Xcode
 #
 build/
