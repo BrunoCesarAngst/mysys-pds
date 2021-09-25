@@ -17,10 +17,19 @@ import {
   FooterWrapper,
 } from "./styles"
 import { useAuth } from "../../hooks/auth"
+import { Alert } from "react-native"
 
 export function SignIn() {
-  const { user } = useAuth()
-  console.log(user)
+  const { signWithGoogle } = useAuth()
+
+  async function handleSignWithGoogle() {
+    try {
+      await signWithGoogle()
+    } catch (error) {
+      console.log({ error })
+      Alert.alert("Não foi possível conectar a conta Google!")
+    }
+  }
 
   return (
     <Container>
@@ -39,7 +48,11 @@ export function SignIn() {
       </Header>
       <Footer>
         <FooterWrapper>
-          <SignInSocialButton title="Google Login" svg={GoogleSvg} />
+          <SignInSocialButton
+            title="Google Login"
+            svg={GoogleSvg}
+            onPress={handleSignWithGoogle}
+          />
           <SignInSocialButton title="Apple Login" svg={AppleSvg} />
         </FooterWrapper>
       </Footer>

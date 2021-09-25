@@ -4,7 +4,14 @@ import { format } from "date-fns"
 
 import { db } from "../../config/firebase"
 
-import { Alert, Keyboard, TouchableWithoutFeedback } from "react-native"
+import {
+  Alert,
+  Keyboard,
+  NativeSyntheticEvent,
+  Text,
+  TextInputChangeEventData,
+  TouchableWithoutFeedback,
+} from "react-native"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
 
@@ -14,7 +21,8 @@ import { useNavigation } from "@react-navigation/native"
 
 import { Button } from "../../component/Form/Button"
 import { InputForm } from "../../component/Form/InputForm"
-import { Container, Header, Title, Form, Fields } from "./styles"
+
+import { Container, Header, Title, Form, Fields, Buttons } from "./styles"
 import { StackNavigationProp } from "@react-navigation/stack"
 import { AppNavigatorParamsList } from "../../routes/types"
 
@@ -24,6 +32,10 @@ type CollectStuffScreenNavigationProps = StackNavigationProp<
 >
 
 type CollectStuffRoutProps = RouteProp<AppNavigatorParamsList, "Collect">
+
+interface TypeProp {
+  type: "cancel" | "edit"
+}
 
 interface CollectionFormData {
   id: string
@@ -37,8 +49,28 @@ const schema = yup.object().shape({
   title: yup.string().required("The title must be reported."),
   description: yup.string(),
 })
-export function CollectStuff() {
+export function CollectStuff({ type }: TypeProp) {
+  const route = useRoute<CollectStuffRoutProps>()
+
+  const navigation = useNavigation<CollectStuffScreenNavigationProps>()
+
   const [stuffs, setStuffs] = useState<CollectionFormData[]>([])
+  const [theTitle, setTitle] = useState("")
+
+  function change(title: CollectStuffRoutProps) {
+    if (typeof title.params?.title === "string") {
+      setTitle(title.params?.title)
+    } else {
+      return
+    }
+  }
+
+  const idStuff = route.params?.idStuff
+  const title = route.params?.title
+  const description = route.params?.description
+  // const date = route.params?.date
+
+  console.log({ theTitle })
 
   useEffect(() => {
     db.collection("stuffs").onSnapshot((query) => {
@@ -57,17 +89,10 @@ export function CollectStuff() {
     }, [])
   )
 
-  const route = useRoute<CollectStuffRoutProps>()
-
-  const navigation = useNavigation<CollectStuffScreenNavigationProps>()
-
-  const idStuff = route.params?.idStuff
-  const title = route.params?.title
-  const description = route.params?.description
-  // const date = route.params?.date
-
   const {
     control,
+    register,
+    setValue,
     handleSubmit,
     reset,
     formState: { errors },
@@ -75,15 +100,18 @@ export function CollectStuff() {
     resolver: yupResolver(schema),
   })
 
+  useEffect(() => {
+    register("title")
+    register("description")
+  }, [register])
+
   async function collectAStuff(form: CollectionFormData) {
     try {
-      const date = format(new Date(), "dd/MM/yy - HH:mm")
-
       await db.collection("stuffs").add({
         title: form.title,
         description: form.description,
-        date: date,
-        update: date,
+        date: new Date().getTime(),
+        update: new Date().getTime(),
       })
 
       navigation.setParams({
@@ -100,9 +128,22 @@ export function CollectStuff() {
   }
 
   async function handleCollecting(form: CollectionFormData) {
-    try {
-      const date = format(new Date(), "dd/MM/yy - HH:mm")
+    Alert.alert(
+      "Start",
+      `You want to clarify ${form.title} which you describe as ${form.description}`,
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        { text: "OK", onPress: () => console.log("OK Pressed") },
+        { text: "OK", onPress: () => console.log("OK Pressed") },
+      ],
+      { cancelable: false }
+    )
 
+    try {
       const selectedStuff = stuffs.find((stuff) => stuff.id === idStuff)
       if (selectedStuff) {
         await db.collection("stuffs").doc(selectedStuff.id).set({
@@ -110,25 +151,11 @@ export function CollectStuff() {
           title: form.title,
           description: form.description,
           date: selectedStuff.date,
-          update: date,
+          update: new Date().getTime(),
         })
       } else {
         Alert.alert("Essa stuff não existe")
       }
-
-      Alert.alert(
-        form.title,
-        "Want to clarify this entry?",
-        [
-          {
-            text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel",
-          },
-          { text: "OK", onPress: () => console.log("OK Pressed") },
-        ],
-        { cancelable: false }
-      )
 
       navigation.setParams({
         idStuff: undefined,
@@ -170,7 +197,11 @@ export function CollectStuff() {
               />
             </Fields>
 
-            <Button title="Collect" onPress={handleSubmit(collectAStuff)} />
+            <Button
+              type="edit"
+              title="Collect"
+              onPress={handleSubmit(collectAStuff)}
+            />
           </Form>
         </Container>
       </TouchableWithoutFeedback>
@@ -183,6 +214,7 @@ export function CollectStuff() {
         <Container>
           <Header>
             <Title>Editing Stuff</Title>
+            <Title>What is it?</Title>
           </Header>
 
           <Form>
@@ -190,6 +222,9 @@ export function CollectStuff() {
               <InputForm
                 name="title"
                 defaultValue={title}
+                onChange={(text) => {
+                  setValue("title", text)
+                }}
                 control={control}
                 placeholder="Title"
                 autoCapitalize="sentences"
@@ -200,13 +235,26 @@ export function CollectStuff() {
               <InputForm
                 name="description"
                 defaultValue={description}
+                onChange={(text) => {
+                  setValue("description", text)
+                }}
                 control={control}
                 placeholder="Description"
                 errorForm={errors.description && errors.description.message}
               />
             </Fields>
-
-            <Button title="Edit" onPress={handleSubmit(handleCollecting)} />
+            <Buttons>
+              <Button
+                type="edit"
+                title="Edit"
+                onPress={handleSubmit(handleCollecting)}
+              />
+              <Button
+                type="cancel"
+                title="Cancel"
+                onPress={handleSubmit(handleCollecting)}
+              />
+            </Buttons>
           </Form>
         </Container>
       </TouchableWithoutFeedback>

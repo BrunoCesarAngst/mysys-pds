@@ -1,11 +1,12 @@
 {
   "expo": {
-    "name": "mySys",
-    "slug": "mySys",
+    "name": "mysys",
+    "slug": "mysys",
+    "scheme": "mysys",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
     ]
   },
-  "name": "mySys"
+  "name": "mysys"
 }

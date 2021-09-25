@@ -1,3 +1,4 @@
+// typing the .env values
 declare module "@env" {
   export const APIKEY: string
   export const AUTHDOMAIN: string
@@ -6,4 +7,6 @@ declare module "@env" {
   export const MESSAGINGSENDERID: string
   export const APPID: string
   export const MEASUREMENTID: string
+  export const CLIENT_ID: string
+  export const REDIRECT_URI: string
 }

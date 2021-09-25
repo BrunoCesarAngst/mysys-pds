@@ -9,7 +9,7 @@ import "firebase/firestore"
 
 import {
   APIKEY,
-  AUTHDOMAIM,
+  AUTHDOMAIN,
   APPID,
   MEASUREMENTID,
   MESSAGINGSENDERID,
@@ -20,7 +20,7 @@ import {
 // Initialize Firebase
 const firebaseConfig = {
   apiKey: APIKEY,
-  authDomain: AUTHDOMAIM,
+  authDomain: AUTHDOMAIN,
   projectId: PROJECTID,
   storageBucket: STORAGEBUCKET,
   messagingSenderId: MESSAGINGSENDERID,

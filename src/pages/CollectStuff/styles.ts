@@ -35,3 +35,9 @@ export const Form = styled.View`
 export const Fields = styled.View`
   margin-top: ${RFValue(130)}px;
 `
+
+export const Buttons = styled.View`
+  justify-content: space-between;
+  align-items: center;
+  /* padding: 5px; */
+`

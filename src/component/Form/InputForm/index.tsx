@@ -18,7 +18,12 @@ export function InputForm({ control, name, errorForm, ...rest }: Props) {
       <Controller
         control={control}
         render={({ field: { onChange, value } }) => (
-          <Input onChangeText={onChange} value={value} {...rest} />
+          <Input
+            onChangeText={onChange}
+            value={value}
+            defaultValue={value}
+            {...rest}
+          />
         )}
         name={name}
       />
