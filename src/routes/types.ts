@@ -8,4 +8,5 @@ export type AppNavigatorParamsList = {
   Dashboard: undefined
   Collect: CollectProps
   Listing: undefined
+  SignIn?: undefined
 }

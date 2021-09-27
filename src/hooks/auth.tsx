@@ -7,7 +7,6 @@ import React, {
 } from "react"
 import * as AuthSession from "expo-auth-session"
 import * as AppleAuthentication from "expo-apple-authentication"
-import { collection, query, where } from "firebase"
 
 import { CLIENT_ID, REDIRECT_URI } from "@env"
 import AsyncStorage from "@react-native-async-storage/async-storage"
@@ -18,7 +17,7 @@ interface AuthProviderProps {
 }
 
 interface User {
-  id: string
+  userId: string
   name: string | null
   email: string | null
   photo?: string
@@ -28,6 +27,8 @@ interface IAuthContextProps {
   user: User
   signWithGoogle(): Promise<void>
   signWithApple(): Promise<void>
+  signOut(): Promise<void>
+  userStorageLoading: boolean
 }
 
 interface AuthorizationResponse {
@@ -42,12 +43,15 @@ const AuthContext = createContext({} as IAuthContextProps)
 function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User>({} as User)
   const [users, setUsers] = useState<User[]>([{} as User])
+  const [userStorageLoading, setUserStorageLoading] = useState(true)
+
+  const userStorageKey = "@mysys:user"
 
   useEffect(() => {
     db.collection("users").onSnapshot((query) => {
       const list: any[] = []
       query.forEach((doc) => {
-        list.push({ ...doc.data() })
+        list.push({ ...(doc.data() as User) })
       })
 
       setUsers(list)
@@ -76,22 +80,22 @@ function AuthProvider({ children }: AuthProviderProps) {
         const theId = userInfo.id
 
         const userLogged = {
-          id: userInfo.id,
+          userId: userInfo.id,
           email: userInfo.email,
           name: userInfo.given_name,
           photo: userInfo.picture,
         }
 
         setUser(userLogged)
-        await AsyncStorage.setItem("@mysys:users", JSON.stringify(userLogged))
+        await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged))
 
-        const theUser = users.find((user) => user.id === userInfo.id)
+        const theUser = users.find((user) => user.userId === userInfo.id)
 
         if (theUser) {
           console.log("O usuário já existe")
         } else {
           await db.collection("users").add({
-            id: userInfo.id,
+            userId: userInfo.id,
             email: userInfo.email,
             name: userInfo.given_name,
             photo: userInfo.picture,
@@ -115,15 +119,17 @@ function AuthProvider({ children }: AuthProviderProps) {
       })
 
       if (credential) {
+        const name = credential.fullName!.givenName!
+        const photo = `https://ui-avatars.com/api/?name=${name}&length=1`
         const userLogged = {
-          id: credential.user,
+          userId: credential.user,
           email: credential.email!,
-          name: credential.fullName!.givenName,
-          photo: undefined,
+          name,
+          photo,
         }
 
         setUser(userLogged)
-        await AsyncStorage.setItem("@mysys:users", JSON.stringify(userLogged))
+        await AsyncStorage.setItem(userStorageKey, JSON.stringify(userLogged))
 
         const theUser = users.find((user) => user.email === credential.email)
 
@@ -131,7 +137,7 @@ function AuthProvider({ children }: AuthProviderProps) {
           console.log("O usuário já existe")
         } else {
           await db.collection("users").add({
-            id: credential.user,
+            userId: credential.user,
             email: credential.email!,
             name: credential.fullName!.givenName,
             photo: undefined,
@@ -145,8 +151,35 @@ function AuthProvider({ children }: AuthProviderProps) {
     }
   }
 
+  async function signOut() {
+    setUser({} as User)
+    await AsyncStorage.removeItem(userStorageKey)
+  }
+
+  useEffect(() => {
+    async function loadUserStorageData() {
+      const useStorage = await AsyncStorage.getItem(userStorageKey)
+
+      if (useStorage) {
+        const userLogged = JSON.parse(useStorage) as User
+        setUser(userLogged)
+      }
+      setUserStorageLoading(false)
+    }
+
+    loadUserStorageData()
+  }, [])
+
   return (
-    <AuthContext.Provider value={{ user, signWithGoogle, signWithApple }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        signWithGoogle,
+        signWithApple,
+        signOut,
+        userStorageLoading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   )

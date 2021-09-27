@@ -4,19 +4,13 @@ import { format } from "date-fns"
 
 import { db } from "../../config/firebase"
 
-import {
-  Alert,
-  Keyboard,
-  NativeSyntheticEvent,
-  Text,
-  TextInputChangeEventData,
-  TouchableWithoutFeedback,
-} from "react-native"
+import { Alert, Keyboard, TouchableWithoutFeedback } from "react-native"
 import * as yup from "yup"
 import { yupResolver } from "@hookform/resolvers/yup"
 
 import { useForm } from "react-hook-form"
-import { NavigationStackProp } from "react-navigation-stack"
+import { useAuth } from "../../hooks/auth"
+
 import { useNavigation } from "@react-navigation/native"
 
 import { Button } from "../../component/Form/Button"
@@ -43,6 +37,7 @@ interface CollectionFormData {
   description: string
   date: string
   update: string
+  userId: string
 }
 
 const schema = yup.object().shape({
@@ -56,6 +51,8 @@ export function CollectStuff({ type }: TypeProp) {
 
   const [stuffs, setStuffs] = useState<CollectionFormData[]>([])
   const [theTitle, setTitle] = useState("")
+
+  const { user } = useAuth()
 
   function change(title: CollectStuffRoutProps) {
     if (typeof title.params?.title === "string") {
@@ -112,6 +109,7 @@ export function CollectStuff({ type }: TypeProp) {
         description: form.description,
         date: new Date().getTime(),
         update: new Date().getTime(),
+        userId: user.userId,
       })
 
       navigation.setParams({
