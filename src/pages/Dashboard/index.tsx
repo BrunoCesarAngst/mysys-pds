@@ -3,6 +3,7 @@ import { db } from "../../config/firebase"
 import { format } from "date-fns"
 
 import { useTheme } from "styled-components"
+import { useAuth } from "../../hooks/auth"
 
 import {
   Container,
@@ -21,6 +22,7 @@ import {
   LogoutButton,
   LoadContainer,
 } from "./styles"
+
 import { HighlightCard } from "../../component/HighlightCard"
 import { DataStuffCardData, StuffCard } from "../../component/StuffCard"
 import { RouteProp, useFocusEffect } from "@react-navigation/core"
@@ -37,6 +39,7 @@ type DashboardScreenNavigationProps = StackNavigationProp<
 type DashboardRouteProps = RouteProp<AppNavigatorParamsList, "Dashboard">
 export interface DataInboxList extends DataStuffCardData {
   id: string
+  userId: string
 }
 
 interface HighlightProps {
@@ -56,6 +59,8 @@ export function Dashboard() {
   )
 
   const theme = useTheme()
+
+  const { signOut, user } = useAuth()
 
   function getStuffsTotalCollect(collection: DataInboxList[]) {
     console.log("oi", { collection })
@@ -83,17 +88,20 @@ export function Dashboard() {
 
   async function loadStuffs() {
     try {
-      await db.collection("stuffs").onSnapshot((query) => {
-        const list: DataInboxList[] = []
-        query.forEach((doc) => {
-          list.push({ ...(doc.data() as DataInboxList), id: doc.id })
+      await db
+        .collection("stuffs")
+        .where("userId", "==", user.userId)
+        .onSnapshot((query) => {
+          const list: DataInboxList[] = []
+          query.forEach((doc) => {
+            list.push({ ...(doc.data() as DataInboxList), id: doc.id })
+          })
+
+          handlingTheStuffThatComesFromTheDatabase(list)
+
+          console.log("primeiro no useEffect", { list })
+          console.log("primeiro no useEffect stuffs", { stuffs })
         })
-
-        handlingTheStuffThatComesFromTheDatabase(list)
-
-        console.log("primeiro no useEffect", { list })
-        console.log("primeiro no useEffect stuffs", { stuffs })
-      })
     } catch (error) {
       console.log("no loadStuffs", error)
     }
@@ -117,15 +125,13 @@ export function Dashboard() {
           const date = format(teste1, "dd/MM/yy - HH:mm")
           const update = format(teste2, "dd/MM/yy - HH:mm")
 
-          console.log({ date })
-          console.log({ update })
-
           return {
             id: item.id,
             title: item.title,
             description: item.description,
             date,
             update,
+            userId: item.userId,
           }
         }
       )
@@ -148,10 +154,6 @@ export function Dashboard() {
     }
   }
 
-  // useEffect(() => {
-  //   loadStuffs()
-  // }, [])
-
   useFocusEffect(
     useCallback(() => {
       loadStuffs()
@@ -171,15 +173,15 @@ export function Dashboard() {
               <UserInfo>
                 <Photo
                   source={{
-                    uri: "https://avatars.githubusercontent.com/u/42010291?v=4",
+                    uri: user.photo,
                   }}
                 />
                 <User>
                   <UserGreeting>Hi,</UserGreeting>
-                  <UserName>Bruno</UserName>
+                  <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
-              <LogoutButton onPress={() => {}}>
+              <LogoutButton onPress={signOut}>
                 <Icon name="power" />
               </LogoutButton>
             </UserWrapper>
