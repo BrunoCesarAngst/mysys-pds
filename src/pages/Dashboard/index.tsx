@@ -25,12 +25,13 @@ import {
 
 import { HighlightCard } from "../../component/HighlightCard"
 import { DataStuffCardData, StuffCard } from "../../component/StuffCard"
-import { RouteProp, useFocusEffect } from "@react-navigation/core"
+import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/core"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import { useNavigation } from "@react-navigation/native"
 import { StackNavigationProp } from "@react-navigation/stack"
 import { AppNavigatorParamsList } from "../../routes/types"
 import { ActivityIndicator, Alert } from "react-native"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 
 type DashboardScreenNavigationProps = StackNavigationProp<
   AppNavigatorParamsList,
@@ -57,6 +58,11 @@ export function Dashboard() {
   const [highlightData, setHighlightData] = useState<IHighlightData>(
     {} as IHighlightData
   )
+  const navigation = useNavigation<DashboardScreenNavigationProps>()
+  const route = useRoute<DashboardRouteProps>()
+  // const email = route.params?.email
+  // const name = route.params?.name
+  // const email = route.params?.email
 
   const theme = useTheme()
 
@@ -84,10 +90,9 @@ export function Dashboard() {
     }
   }
 
-  const navigation = useNavigation<DashboardScreenNavigationProps>()
-
   async function loadStuffs() {
     try {
+      console.log(user.userId)
       await db
         .collection("stuffs")
         .where("userId", "==", user.userId)
@@ -97,8 +102,9 @@ export function Dashboard() {
             list.push({ ...(doc.data() as DataInboxList), id: doc.id })
           })
 
-          handlingTheStuffThatComesFromTheDatabase(list)
+          console.log({ list })
 
+          handlingTheStuffThatComesFromTheDatabase(list)
           console.log("primeiro no useEffect", { list })
           console.log("primeiro no useEffect stuffs", { stuffs })
         })

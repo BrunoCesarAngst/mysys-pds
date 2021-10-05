@@ -7,6 +7,7 @@ export interface DataStuffCardData {
   description: string
   date: string
   update: string
+  userId: string
 }
 interface Props {
   data: DataStuffCardData

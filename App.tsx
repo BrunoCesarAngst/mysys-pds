@@ -22,6 +22,8 @@ import theme from "./src/global/style/theme"
 import { SignIn } from "./src/pages/SignIn"
 import { AuthProvider } from "./src/hooks/auth"
 import { AppRoutes } from "./src/routes/app.routes"
+import { Routes } from "./src/routes"
+import { RegisterScreen } from "./src/pages/register1/register.screen"
 
 export default function App() {
   LogBox.ignoreLogs([
@@ -52,12 +54,10 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <NavigationContainer>
-        {/* <AppRoutes /> */}
-        <AuthProvider>
-          <SignIn />
-        </AuthProvider>
-      </NavigationContainer>
+      <AuthProvider>
+        {/* <RegisterScreen /> */}
+        <Routes />
+      </AuthProvider>
     </ThemeProvider>
   )
 }
