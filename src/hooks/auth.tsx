@@ -115,8 +115,8 @@ function AuthProvider({ children }: AuthProviderProps) {
             }
           })
       }
-    } catch ({ message }) {
-      alert("login: Error:" + message)
+    } catch (error) {
+      throw new Error({ error })
     }
   }
 

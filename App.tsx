@@ -8,7 +8,8 @@ import { LogBox } from "react-native"
 import { OrientationLock } from "expo-screen-orientation"
 import { useScreenOrientationLock } from "@use-expo/screen-orientation"
 
-import { NavigationContainer } from "@react-navigation/native"
+import { Routes } from "./src/routes"
+
 import { ThemeProvider } from "styled-components"
 import AppLoading from "expo-app-loading"
 import {
@@ -19,11 +20,7 @@ import {
 } from "@expo-google-fonts/poppins"
 
 import theme from "./src/global/style/theme"
-import { SignIn } from "./src/pages/SignIn"
-import { AuthProvider } from "./src/hooks/auth"
-import { AppRoutes } from "./src/routes/app.routes"
-import { Routes } from "./src/routes"
-import { RegisterScreen } from "./src/pages/register1/register.screen"
+import { AuthProvider, useAuth } from "./src/hooks/auth"
 
 export default function App() {
   LogBox.ignoreLogs([
@@ -48,7 +45,9 @@ export default function App() {
     Poppins_600SemiBold,
   })
 
-  if (!fontsLoaded) {
+  const { userStorageLoading } = useAuth()
+
+  if (!fontsLoaded || userStorageLoading) {
     return <AppLoading />
   }
 
