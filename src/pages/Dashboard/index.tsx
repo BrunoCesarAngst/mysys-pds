@@ -46,6 +46,7 @@ export interface DataInboxList extends DataStuffCardData {
 interface HighlightProps {
   amount: string
   lastInput: string
+  lastTitle: string
 }
 
 interface IHighlightData {
@@ -60,20 +61,35 @@ export function Dashboard() {
   )
   const navigation = useNavigation<DashboardScreenNavigationProps>()
   const route = useRoute<DashboardRouteProps>()
-  // const email = route.params?.email
-  // const name = route.params?.name
-  // const email = route.params?.email
 
   const theme = useTheme()
 
   const { signOut, user } = useAuth()
 
   function getStuffsTotalCollect(collection: DataInboxList[]) {
-    console.log("oi", { collection })
     if (collection.length > 0) {
       return collection.length.toString()
     } else {
       return "There is nothing..."
+    }
+  }
+
+  function getLastCollectTitle(collection: DataInboxList[]) {
+    if (collection.length > 0) {
+      const lastInput = Math.max.apply(
+        Math,
+        collection.map((item) => new Date(item.date).getTime())
+      )
+      const lastTitle = collection.find((item) => {
+        const date = new Date(item.date).getTime()
+        if (date === lastInput) {
+          return item.title
+        }
+      })
+
+      return lastTitle
+    } else {
+      return "to discern "
     }
   }
 
@@ -86,7 +102,7 @@ export function Dashboard() {
 
       return format(new Date(lastInput), "dd/MM/yy - HH:mm")
     } else {
-      return "to discern."
+      return "here."
     }
   }
 
@@ -105,8 +121,6 @@ export function Dashboard() {
           console.log({ list })
 
           handlingTheStuffThatComesFromTheDatabase(list)
-          console.log("primeiro no useEffect", { list })
-          console.log("primeiro no useEffect stuffs", { stuffs })
         })
     } catch (error) {
       console.log("no loadStuffs", error)
@@ -122,6 +136,9 @@ export function Dashboard() {
     try {
       const lastInputDate = getLastCollectDate(list)
       const totalStuffs = getStuffsTotalCollect(list)
+      const lastTitle = getLastCollectTitle(list)
+
+      console.log(lastInputDate)
 
       const collectedStuffs: DataInboxList[] = await list.map(
         (item: DataInboxList) => {
@@ -144,13 +161,11 @@ export function Dashboard() {
 
       setStuffs(collectedStuffs)
 
-      console.log("segundo no useEffect", { collectedStuffs })
-      console.log("segundo no useEffect stuffs", { stuffs })
-
       setHighlightData({
         input: {
           amount: totalStuffs,
           lastInput: lastInputDate,
+          lastTitle: lastTitle,
         },
       })
     } catch (error) {
@@ -199,18 +214,21 @@ export function Dashboard() {
               title="Entries"
               amount={highlightData.input.amount}
               lastInput={highlightData.input.lastInput}
+              lastTitle={highlightData.input.lastTitle}
             />
             <HighlightCard
               type="demand"
               title="Demands"
               amount="95"
               lastInput="Study pointers"
+              lastTitle="1"
             />
             <HighlightCard
               type="done"
               title="Concluded"
               amount="37"
               lastInput="Talk to Ellon"
+              lastTitle="2"
             />
           </HighlightCards>
 

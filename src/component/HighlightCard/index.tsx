@@ -15,6 +15,7 @@ interface Props {
   type: "input" | "demand" | "done"
   amount: string
   lastInput: string
+  lastTitle: string
 }
 
 const iconOfCard = {
@@ -23,7 +24,13 @@ const iconOfCard = {
   done: "thumbs-up",
 }
 
-export function HighlightCard({ title, type, amount, lastInput }: Props) {
+export function HighlightCard({
+  title,
+  type,
+  amount,
+  lastTitle,
+  lastInput,
+}: Props) {
   return (
     <Container type={type}>
       <Header>
@@ -33,7 +40,9 @@ export function HighlightCard({ title, type, amount, lastInput }: Props) {
 
       <Footer>
         <Amount type={type}>{amount}</Amount>
-        <LastInput type={type}>{lastInput}</LastInput>
+        <LastInput type={type}>
+          {lastTitle} - {lastInput}
+        </LastInput>
       </Footer>
     </Container>
   )

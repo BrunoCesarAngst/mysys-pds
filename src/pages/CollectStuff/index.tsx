@@ -13,12 +13,11 @@ import { useAuth } from "../../hooks/auth"
 
 import { useNavigation } from "@react-navigation/native"
 
-import { Button } from "../../component/Form/Button"
-import { InputForm } from "../../component/Form/InputForm"
-
 import { Container, Header, Title, Form, Fields, Buttons } from "./styles"
 import { StackNavigationProp } from "@react-navigation/stack"
 import { AppNavigatorParamsList } from "../../routes/types"
+import { Formik, useFormik } from "formik"
+import { Button, Text, TextInput } from "react-native-paper"
 
 type CollectStuffScreenNavigationProps = StackNavigationProp<
   AppNavigatorParamsList,
@@ -31,6 +30,11 @@ interface TypeProp {
   type: "cancel" | "edit"
 }
 
+interface Stuff {
+  title: string
+  description?: string
+}
+
 interface CollectionFormData {
   id: string
   title: string
@@ -40,7 +44,7 @@ interface CollectionFormData {
   userId: string
 }
 
-const schema = yup.object().shape({
+const schemaForm = yup.object().shape({
   title: yup.string().required("The title must be reported."),
   description: yup.string(),
 })
@@ -49,25 +53,19 @@ export function CollectStuff() {
 
   const navigation = useNavigation<CollectStuffScreenNavigationProps>()
 
-  const [stuffs, setStuffs] = useState<CollectionFormData[]>([])
-  const [theTitle, setTitle] = useState("")
-
-  const { user } = useAuth()
-
-  function change(title: CollectStuffRoutProps) {
-    if (typeof title.params?.title === "string") {
-      setTitle(title.params?.title)
-    } else {
-      return
-    }
-  }
-
   const idStuff = route.params?.idStuff
   const title = route.params?.title
   const description = route.params?.description
   // const date = route.params?.date
 
-  console.log({ theTitle })
+  const initialValues: Stuff = {
+    title: title ? title : "",
+    description: description ? description : "",
+  }
+
+  const [stuffs, setStuffs] = useState<CollectionFormData[]>([])
+
+  const { user } = useAuth()
 
   useEffect(() => {
     db.collection("stuffs").onSnapshot((query) => {
@@ -80,89 +78,31 @@ export function CollectStuff() {
     })
   }, [])
 
-  useFocusEffect(
-    useCallback(() => {
-      reset()
-    }, [])
-  )
+  async function editStuff(values: Stuff, selectedStuff: CollectionFormData) {
+    try {
+      await db.collection("stuffs").doc(selectedStuff?.id).set({
+        id: selectedStuff?.id,
+        title: values.title,
+        description: values.description,
+        date: selectedStuff?.date,
+        update: new Date().getTime(),
+        userId: user.userId,
+      })
+    } catch (error) {
+      console.log(error)
+      Alert.alert("Não deu para editar!")
+    }
+  }
 
-  const {
-    control,
-    register,
-    setValue,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(schema),
-  })
-
-  useEffect(() => {
-    register("title")
-    register("description")
-  }, [register])
-
-  async function collectAStuff(form: CollectionFormData) {
+  async function newStuff(values: Stuff) {
     try {
       await db.collection("stuffs").add({
-        title: form.title,
-        description: form.description,
+        title: values.title,
+        description: values.description,
         date: new Date().getTime(),
         update: new Date().getTime(),
         userId: user.userId,
       })
-
-      navigation.setParams({
-        idStuff: undefined,
-        title: undefined,
-        description: undefined,
-      })
-
-      navigation.navigate("Dashboard")
-    } catch (error) {
-      console.log(error)
-      Alert.alert("Não deu!")
-    }
-  }
-
-  async function handleCollecting(form: CollectionFormData) {
-    Alert.alert(
-      "Start",
-      `You want to clarify ${form.title} which you describe as ${form.description}`,
-      [
-        {
-          text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
-          style: "cancel",
-        },
-        { text: "OK", onPress: () => console.log("OK Pressed") },
-        { text: "OK", onPress: () => console.log("OK Pressed") },
-      ],
-      { cancelable: false }
-    )
-
-    try {
-      const selectedStuff = stuffs.find((stuff) => stuff.id === idStuff)
-      if (selectedStuff) {
-        await db.collection("stuffs").doc(selectedStuff.id).set({
-          id: selectedStuff.id,
-          title: form.title,
-          description: form.description,
-          date: selectedStuff.date,
-          update: new Date().getTime(),
-          userId: user.userId,
-        })
-      } else {
-        Alert.alert("Essa stuff não existe")
-      }
-
-      navigation.setParams({
-        idStuff: undefined,
-        title: undefined,
-        description: undefined,
-      })
-
-      navigation.navigate("Dashboard")
     } catch (error) {
       console.log(error)
       Alert.alert("Não deu!")
@@ -174,91 +114,76 @@ export function CollectStuff() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <Container>
           <Header>
-            <Title>Collecting Stuff</Title>
+            {idStuff ? (
+              <Title>Edit Stuff</Title>
+            ) : (
+              <Title>Collecting Stuff</Title>
+            )}
           </Header>
 
-          <Form>
-            <Fields>
-              <InputForm
-                name="title"
-                control={control}
-                placeholder="Title"
-                autoCapitalize="sentences"
-                autoCorrect={false}
-                errorForm={errors.title && errors.title.message}
-              />
+          <Formik
+            initialValues={initialValues}
+            onSubmit={(values) => {
+              const selectedStuff = stuffs.find((stuff) => stuff.id === idStuff)
+              if (selectedStuff) {
+                editStuff(values, selectedStuff)
+              } else {
+                newStuff(values)
+              }
 
-              <InputForm
-                name="description"
-                control={control}
-                placeholder="Description"
-                errorForm={errors.description && errors.description.message}
-              />
-            </Fields>
+              navigation.setParams({
+                idStuff: undefined,
+                title: undefined,
+                description: undefined,
+              })
 
-            <Button
-              type="edit"
-              title="Collect"
-              onPress={handleSubmit(collectAStuff)}
-            />
-          </Form>
+              navigation.navigate("Dashboard")
+            }}
+            validationSchema={schemaForm}
+          >
+            {({
+              handleSubmit,
+              handleChange,
+              errors,
+              setFieldTouched,
+              touched,
+              values,
+            }) => (
+              <Fields>
+                <TextInput
+                  label="Title"
+                  onChangeText={handleChange("title")}
+                  onFocus={() => setFieldTouched("title")}
+                  value={values.title}
+                />
+                {touched.title && errors.title ? (
+                  <Text style={{ color: "white", backgroundColor: "red" }}>
+                    {errors.title}
+                  </Text>
+                ) : null}
+
+                <TextInput
+                  label="Description"
+                  multiline
+                  numberOfLines={3}
+                  onChangeText={handleChange("description")}
+                  onFocus={() => setFieldTouched("description")}
+                  value={values.description}
+                />
+                <Button
+                  mode="contained"
+                  onPress={handleSubmit}
+                  disabled={values.title == "" || errors.title ? true : false}
+                >
+                  {idStuff ? "Edit" : "Collect"}
+                </Button>
+              </Fields>
+            )}
+          </Formik>
         </Container>
       </TouchableWithoutFeedback>
     )
   }
 
-  function EditStuff() {
-    return (
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <Container>
-          <Header>
-            <Title>Editing Stuff</Title>
-            <Title>What is it?</Title>
-          </Header>
-
-          <Form>
-            <Fields>
-              <InputForm
-                name="title"
-                defaultValue={title}
-                onChange={(text) => {
-                  setValue("title", text)
-                }}
-                control={control}
-                placeholder="Title"
-                autoCapitalize="sentences"
-                autoCorrect={false}
-                errorForm={errors.title && errors.title.message}
-              />
-
-              <InputForm
-                name="description"
-                defaultValue={description}
-                onChange={(text) => {
-                  setValue("description", text)
-                }}
-                control={control}
-                placeholder="Description"
-                errorForm={errors.description && errors.description.message}
-              />
-            </Fields>
-            <Buttons>
-              <Button
-                type="edit"
-                title="Edit"
-                onPress={handleSubmit(handleCollecting)}
-              />
-              <Button
-                type="cancel"
-                title="Cancel"
-                onPress={handleSubmit(handleCollecting)}
-              />
-            </Buttons>
-          </Form>
-        </Container>
-      </TouchableWithoutFeedback>
-    )
-  }
-
-  return <>{idStuff ? <EditStuff /> : <NewStuff />}</>
+  return <NewStuff />
 }

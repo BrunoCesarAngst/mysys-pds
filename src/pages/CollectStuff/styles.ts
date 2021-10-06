@@ -33,7 +33,13 @@ export const Form = styled.View`
 `
 
 export const Fields = styled.View`
-  margin-top: ${RFValue(130)}px;
+  margin-top: ${RFValue(55)}px;
+  flex: 1;
+
+  /* justify-content: space-between; */
+  width: 100%;
+
+  padding: 23px;
 `
 
 export const Buttons = styled.View`
