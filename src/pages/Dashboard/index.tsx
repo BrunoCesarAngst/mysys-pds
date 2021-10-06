@@ -87,7 +87,7 @@ export function Dashboard() {
         }
       })
 
-      return lastTitle
+      return lastTitle!.title
     } else {
       return "to discern "
     }
@@ -137,8 +137,6 @@ export function Dashboard() {
       const lastInputDate = getLastCollectDate(list)
       const totalStuffs = getStuffsTotalCollect(list)
       const lastTitle = getLastCollectTitle(list)
-
-      console.log(lastInputDate)
 
       const collectedStuffs: DataInboxList[] = await list.map(
         (item: DataInboxList) => {
