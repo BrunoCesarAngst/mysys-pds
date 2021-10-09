@@ -77,8 +77,6 @@ function AuthProvider({ children }: AuthProviderProps) {
         scopes: ["profile", "email"],
       })
 
-      console.log(result)
-
       if (result.type === "success") {
         const credential = firebase.auth.GoogleAuthProvider.credential(
           result.idToken,

@@ -8,6 +8,7 @@ export interface DataStuffCardData {
   date: string
   update: string
   userId: string
+  updated: boolean
 }
 interface Props {
   data: DataStuffCardData

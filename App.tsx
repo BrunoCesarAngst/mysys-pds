@@ -4,6 +4,7 @@ import "intl/locale-data/jsonp/pt-BR"
 
 import React from "react"
 import { LogBox } from "react-native"
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper"
 
 import { OrientationLock } from "expo-screen-orientation"
 import { useScreenOrientationLock } from "@use-expo/screen-orientation"
@@ -21,6 +22,17 @@ import {
 
 import theme from "./src/global/style/theme"
 import { AuthProvider, useAuth } from "./src/hooks/auth"
+import { FastAction } from "./src/pages/FastAction"
+
+const themePaper = {
+  ...DefaultTheme,
+  roundness: 2,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "#619b8a",
+    accent: "#ed6a5a",
+  },
+}
 
 export default function App() {
   LogBox.ignoreLogs([
@@ -33,8 +45,6 @@ export default function App() {
     const [lockInfo, lockError] = useScreenOrientationLock(
       OrientationLock.PORTRAIT
     )
-    // console.log({ lockInfo })
-    // console.log({ lockError })
   } catch (error) {
     console.log("Error in useScreenOrientationLock", error)
   }
@@ -53,10 +63,12 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <AuthProvider>
-        {/* <RegisterScreen /> */}
-        <Routes />
-      </AuthProvider>
+      <PaperProvider theme={themePaper}>
+        <AuthProvider>
+          {/* <FastAction /> */}
+          <Routes />
+        </AuthProvider>
+      </PaperProvider>
     </ThemeProvider>
   )
 }

@@ -108,17 +108,15 @@ export function Dashboard() {
 
   async function loadStuffs() {
     try {
-      console.log(user.userId)
       await db
         .collection("stuffs")
         .where("userId", "==", user.userId)
+        .where("fastAction", "!=", true)
         .onSnapshot((query) => {
           const list: DataInboxList[] = []
           query.forEach((doc) => {
             list.push({ ...(doc.data() as DataInboxList), id: doc.id })
           })
-
-          console.log({ list })
 
           handlingTheStuffThatComesFromTheDatabase(list)
         })
@@ -128,7 +126,6 @@ export function Dashboard() {
   }
 
   const now = format(new Date(), "dd/MM/yy - HH:mm")
-  console.log(now)
 
   async function handlingTheStuffThatComesFromTheDatabase(
     list: DataInboxList[]
@@ -153,6 +150,7 @@ export function Dashboard() {
             date,
             update,
             userId: item.userId,
+            updated: item.updated,
           }
         }
       )
@@ -239,27 +237,11 @@ export function Dashboard() {
               renderItem={({ item }) => (
                 <TouchableOpacity
                   onPress={() => {
-                    Alert.alert(
-                      "Start",
-                      `You want to clarify ${item.title} which you describe as ${item.description}`,
-                      [
-                        {
-                          text: "Cancel",
-                          onPress: () => console.log("Cancel Pressed"),
-                          style: "cancel",
-                        },
-                        {
-                          text: "OK",
-                          onPress: () => console.log("OK Pressed"),
-                        },
-                      ],
-                      { cancelable: false }
-                    )
                     navigation.navigate("Collect", {
                       idStuff: item.id,
                       title: item.title,
                       description: item.description,
-                      // date: item.date,
+                      updated: item.updated,
                     })
                   }}
                 >

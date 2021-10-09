@@ -2,6 +2,7 @@ type CollectProps = {
   idStuff?: string
   title?: string
   description?: string
+  updated?: boolean
 }
 
 type AuthProps = {
@@ -11,9 +12,18 @@ type AuthProps = {
 }
 
 export type AppNavigatorParamsList = {
+  Routes: CollectProps
   Dashboard: undefined
   Collect: CollectProps
   Listing: undefined
   SignIn?: undefined
   Auth: AuthProps
+  FastAction: undefined
+  Context: undefined
+  DatedAction: undefined
+  Delegated: undefined
+  Project: undefined
+  Incubated: undefined
+  Reference: undefined
+  Trash: undefined
 }

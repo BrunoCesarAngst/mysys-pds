@@ -8,10 +8,19 @@ import { CollectStuff } from "../pages/CollectStuff"
 import { useTheme } from "styled-components"
 import { AppNavigatorParamsList } from "./types"
 import { Listing } from "../pages/Listing"
+import { StackNavigationProp } from "@react-navigation/stack"
+import { useNavigation, useRoute } from "@react-navigation/core"
 const Tab = createBottomTabNavigator<AppNavigatorParamsList>()
+
+type RoutesNavigationProps = StackNavigationProp<
+  AppNavigatorParamsList,
+  "Routes"
+>
 
 export function AppRoutes() {
   const theme = useTheme()
+
+  const navigation = useNavigation<RoutesNavigationProps>()
 
   return (
     <Tab.Navigator
@@ -49,6 +58,7 @@ export function AppRoutes() {
         name="Listing"
         component={Listing}
         options={{
+          unmountOnBlur: true,
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons
               name="format-list-numbered"
