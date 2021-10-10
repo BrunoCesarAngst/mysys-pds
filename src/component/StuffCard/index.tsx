@@ -8,7 +8,15 @@ export interface DataStuffCardData {
   date: string
   update: string
   userId: string
-  updated: boolean
+  discerned?: boolean
+  fastAction?: boolean
+  incubate?: boolean
+  reference?: boolean
+  trash?: boolean
+  delegated?: boolean
+  actionDate?: boolean
+  context?: boolean
+  project?: boolean
 }
 interface Props {
   data: DataStuffCardData

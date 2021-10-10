@@ -111,7 +111,7 @@ export function Dashboard() {
       await db
         .collection("stuffs")
         .where("userId", "==", user.userId)
-        .where("fastAction", "!=", true)
+        .where("discerned", "==", false)
         .onSnapshot((query) => {
           const list: DataInboxList[] = []
           query.forEach((doc) => {
@@ -150,7 +150,6 @@ export function Dashboard() {
             date,
             update,
             userId: item.userId,
-            updated: item.updated,
           }
         }
       )
@@ -241,7 +240,6 @@ export function Dashboard() {
                       idStuff: item.id,
                       title: item.title,
                       description: item.description,
-                      updated: item.updated,
                     })
                   }}
                 >

@@ -36,6 +36,7 @@ interface CollectionFormData {
   update: string
   userId: string
   updated: boolean
+  fastAction: boolean
 }
 
 const schemaForm = yup.object().shape({
@@ -76,20 +77,16 @@ export function CollectStuff() {
       query.forEach((doc) => {
         list.push({ ...doc.data(), id: doc.id })
       })
-
       setStuffs(list)
     })
   }, [])
 
   async function editStuff(values: Stuff, selectedStuff: CollectionFormData) {
     try {
-      await db.collection("stuffs").doc(selectedStuff?.id).set({
-        id: selectedStuff?.id,
+      await db.collection("stuffs").doc(selectedStuff?.id).update({
         title: values.title,
         description: values.description,
-        date: selectedStuff?.date,
         update: new Date().getTime(),
-        userId: user.userId,
       })
     } catch (error) {
       console.log(error)
@@ -110,6 +107,10 @@ export function CollectStuff() {
         incubate: false,
         reference: false,
         trash: false,
+        delegated: false,
+        actionDate: false,
+        context: false,
+        project: false,
       })
     } catch (error) {
       console.log(error)
@@ -122,93 +123,98 @@ export function CollectStuff() {
     selectedStuff: CollectionFormData
   ) {
     Alert.alert(
-      `This action: ${values.title}`,
-      "This takes less than 2 minutes to do?",
+      `This action ${values.title}, depends on one or more actions`,
+      "Shall we break it down into more actions?",
       [
         {
           text: "Project",
-          onPress: () => {},
+          onPress: () => {
+            console.log("was reported as a project")
+            try {
+              db.collection("stuffs").doc(selectedStuff?.id).update({
+                project: true,
+              })
+            } catch (error) {
+              console.log(error)
+              Alert.alert("Não deu para editar!")
+            }
+          },
         },
       ],
       { cancelable: false }
     )
-    console.log("dicernido")
-    try {
-      await db.collection("stuffs").doc(selectedStuff?.id).update({
-        compoundAction: true,
-      })
-    } catch (error) {
-      console.log(error)
-      Alert.alert("Não deu para editar!")
-    }
   }
 
   async function context(values: Stuff, selectedStuff: CollectionFormData) {
     Alert.alert(
-      `This action: ${values.title}`,
-      "This takes less than 2 minutes to do?",
+      `This action ${values.title} needs a context!`,
+      "What is the best context to act on it?",
       [
         {
           text: "Context",
-          onPress: () => {},
+          onPress: () => {
+            console.log("it was reported as a context specific action")
+            try {
+              db.collection("stuffs").doc(selectedStuff?.id).update({
+                context: true,
+              })
+            } catch (error) {
+              console.log(error)
+              Alert.alert("Não deu para editar!")
+            }
+          },
         },
       ],
       { cancelable: false }
     )
-    console.log("dicernido")
-    try {
-      await db.collection("stuffs").doc(selectedStuff?.id).update({
-        context: true,
-      })
-    } catch (error) {
-      console.log(error)
-      Alert.alert("Não deu para editar!")
-    }
   }
 
   async function actionDate(values: Stuff, selectedStuff: CollectionFormData) {
     Alert.alert(
-      `This action: ${values.title}`,
-      "This takes less than 2 minutes to do?",
+      `This action ${values.title}, needs a date!`,
+      "What is the best date to act on it?",
       [
         {
           text: "Action date",
-          onPress: () => {},
+          onPress: () => {
+            console.log("it was reported as a date-specific action")
+            try {
+              db.collection("stuffs").doc(selectedStuff?.id).update({
+                actionDate: true,
+              })
+            } catch (error) {
+              console.log(error)
+              Alert.alert("Não deu para editar!")
+            }
+          },
         },
       ],
       { cancelable: false }
     )
-    console.log("dicernido")
-    try {
-      await db.collection("stuffs").doc(selectedStuff?.id).update({
-        actionDate: true,
-      })
-    } catch (error) {
-      console.log(error)
-      Alert.alert("Não deu para editar!")
-    }
   }
+
   async function delegate(values: Stuff, selectedStuff: CollectionFormData) {
     Alert.alert(
-      `This action: ${values.title}`,
-      "This takes less than 2 minutes to do?",
+      `This action ${values.title}, will be delegated`,
+      "Who can best act on this action?",
       [
         {
           text: "Fulano",
-          onPress: () => {},
+          onPress: () => {
+            console.log("was reported as a delegate action")
+            try {
+              db.collection("stuffs").doc(selectedStuff?.id).update({
+                delegated: true,
+              })
+            } catch (error) {
+              console.log(error)
+              Alert.alert("Não deu para editar!")
+            }
+          },
         },
       ],
       { cancelable: false }
     )
-    console.log("dicernido")
-    try {
-      await db.collection("stuffs").doc(selectedStuff?.id).update({
-        delegated: true,
-      })
-    } catch (error) {
-      console.log(error)
-      Alert.alert("Não deu para editar!")
-    }
   }
 
   async function conditionalAction(
@@ -216,8 +222,8 @@ export function CollectStuff() {
     selectedStuff: CollectionFormData
   ) {
     Alert.alert(
-      `This action: ${values.title}`,
-      "This takes less than 2 minutes to do?",
+      `This action ${values.title}, has a condition!`,
+      "Does it need to be in context, does it have a specific date, or is it better that I delegate it?",
       [
         {
           text: "Context",
@@ -242,15 +248,7 @@ export function CollectStuff() {
       ],
       { cancelable: false }
     )
-    console.log("dicernido")
-    try {
-      await db.collection("stuffs").doc(selectedStuff?.id).update({
-        conditionalAction: true,
-      })
-    } catch (error) {
-      console.log(error)
-      Alert.alert("Não deu para editar!")
-    }
+    console.log("was reported to be a conditional action")
   }
 
   async function simpleAction(
@@ -271,6 +269,7 @@ export function CollectStuff() {
         {
           text: "Yes",
           onPress: () => {
+            console.log("was reported to be simple action of 2 min")
             try {
               db.collection("stuffs").doc(selectedStuff?.id).update({
                 fastAction: true,
@@ -284,6 +283,7 @@ export function CollectStuff() {
       ],
       { cancelable: false }
     )
+    console.log("was reported to be simple action")
   }
 
   async function haveAction(values: Stuff, selectedStuff: CollectionFormData) {
@@ -307,14 +307,7 @@ export function CollectStuff() {
       ],
       { cancelable: false }
     )
-    try {
-      await db.collection("stuffs").doc(selectedStuff?.id).update({
-        action: true,
-      })
-    } catch (error) {
-      console.log(error)
-      Alert.alert("Não deu para editar!")
-    }
+    console.log("was reported as have action")
   }
 
   async function noAction(values: Stuff, selectedStuff: CollectionFormData) {
@@ -325,6 +318,7 @@ export function CollectStuff() {
         {
           text: "Trash",
           onPress: () => {
+            console.log("was reported as no action trash")
             try {
               db.collection("stuffs").doc(selectedStuff?.id).update({
                 trash: true,
@@ -339,6 +333,7 @@ export function CollectStuff() {
         {
           text: "Incubate",
           onPress: () => {
+            console.log("was reported as no action incubate")
             try {
               db.collection("stuffs").doc(selectedStuff?.id).update({
                 incubate: true,
@@ -353,6 +348,7 @@ export function CollectStuff() {
         {
           text: "Reference",
           onPress: () => {
+            console.log("was reported as no action reference")
             try {
               db.collection("stuffs").doc(selectedStuff?.id).update({
                 reference: true,
@@ -366,14 +362,7 @@ export function CollectStuff() {
       ],
       { cancelable: false }
     )
-    try {
-      await db.collection("stuffs").doc(selectedStuff?.id).update({
-        information: true,
-      })
-    } catch (error) {
-      console.log(error)
-      Alert.alert("Não deu para editar!")
-    }
+    console.log("was reported as no action")
   }
 
   const discern = async (values: Stuff, selectedStuff: CollectionFormData) => {
@@ -397,7 +386,7 @@ export function CollectStuff() {
       ],
       { cancelable: false }
     )
-    console.log("dicernido")
+    console.log("was discerned")
     try {
       await db.collection("stuffs").doc(selectedStuff?.id).update({
         discerned: true,
@@ -427,6 +416,7 @@ export function CollectStuff() {
       ],
       { cancelable: false }
     )
+    console.log("was edited")
   }
 
   function NewStuff(selectedStuff: CollectionFormData) {

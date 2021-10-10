@@ -43,6 +43,9 @@ export function FastAction() {
   const [highlightData, setHighlightData] = useState<IHighlightData>(
     {} as IHighlightData
   )
+
+  console.log({ stuffs })
+
   const navigation = useNavigation<FastActionScreenNavigationProps>()
   const route = useRoute<FastActionRouteProps>()
 
@@ -89,6 +92,28 @@ export function FastAction() {
   //     return "here."
   //   }
   // }
+  async function testWhere() {
+    try {
+      const stuffs = await db
+        .collection("stuffs")
+        .where("fastAction", "==", true)
+      stuffs.onSnapshot((query) => {
+        const listStuffs: DataInboxList[] = []
+        query.forEach((doc) => {
+          {
+            listStuffs.push({ ...(doc.data() as DataInboxList) })
+          }
+        })
+        console.log("testWhere")
+        console.log(listStuffs)
+        console.log({ listStuffs })
+      })
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  testWhere()
 
   async function loadStuffs() {
     try {
@@ -134,7 +159,7 @@ export function FastAction() {
             date,
             update,
             userId: item.userId,
-            updated: item.updated,
+            fastAction: item.fastAction,
           }
         }
       )
@@ -175,7 +200,6 @@ export function FastAction() {
                   idStuff: item.id,
                   title: item.title,
                   description: item.description,
-                  updated: item.updated,
                 })
               }}
             >
