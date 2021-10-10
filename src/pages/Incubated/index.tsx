@@ -95,7 +95,7 @@ export function Incubated() {
       await db
         .collection("stuffs")
         .where("userId", "==", user.userId)
-        .where("fastAction", "==", true)
+        .where("incubate", "==", true)
         .onSnapshot((query) => {
           const list: DataInboxList[] = []
           query.forEach((doc) => {

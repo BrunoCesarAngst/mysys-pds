@@ -95,7 +95,7 @@ export function Delegated() {
       await db
         .collection("stuffs")
         .where("userId", "==", user.userId)
-        .where("fastAction", "==", true)
+        .where("delegated", "==", true)
         .onSnapshot((query) => {
           const list: DataInboxList[] = []
           query.forEach((doc) => {

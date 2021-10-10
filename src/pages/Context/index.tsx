@@ -95,7 +95,7 @@ export function Context() {
       await db
         .collection("stuffs")
         .where("userId", "==", user.userId)
-        .where("fastAction", "==", true)
+        .where("context", "==", true)
         .onSnapshot((query) => {
           const list: DataInboxList[] = []
           query.forEach((doc) => {

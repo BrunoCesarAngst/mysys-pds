@@ -95,7 +95,7 @@ export function Project() {
       await db
         .collection("stuffs")
         .where("userId", "==", user.userId)
-        .where("fastAction", "==", true)
+        .where("project", "==", true)
         .onSnapshot((query) => {
           const list: DataInboxList[] = []
           query.forEach((doc) => {

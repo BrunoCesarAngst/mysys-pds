@@ -95,7 +95,7 @@ export function DatedAction() {
       await db
         .collection("stuffs")
         .where("userId", "==", user.userId)
-        .where("fastAction", "==", true)
+        .where("actionDate", "==", true)
         .onSnapshot((query) => {
           const list: DataInboxList[] = []
           query.forEach((doc) => {
