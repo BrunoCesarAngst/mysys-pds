@@ -3,6 +3,7 @@ import "intl"
 import "intl/locale-data/jsonp/pt-BR"
 
 import React from "react"
+
 import { LogBox } from "react-native"
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper"
 
@@ -22,7 +23,6 @@ import {
 
 import theme from "./src/global/style/theme"
 import { AuthProvider, useAuth } from "./src/hooks/auth"
-import { FastAction } from "./src/pages/FastAction"
 
 const themePaper = {
   ...DefaultTheme,
@@ -65,7 +65,6 @@ export default function App() {
     <ThemeProvider theme={theme}>
       <PaperProvider theme={themePaper}>
         <AuthProvider>
-          {/* <FastAction /> */}
           <Routes />
         </AuthProvider>
       </PaperProvider>

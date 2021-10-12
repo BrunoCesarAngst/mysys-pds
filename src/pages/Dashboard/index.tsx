@@ -56,6 +56,7 @@ interface IHighlightData {
 export function Dashboard() {
   const [isLoading, setIsLoading] = useState(true)
   const [stuffs, setStuffs] = useState<DataInboxList[]>([])
+
   const [highlightData, setHighlightData] = useState<IHighlightData>(
     {} as IHighlightData
   )
@@ -150,6 +151,7 @@ export function Dashboard() {
             date,
             update,
             userId: item.userId,
+            discerned: item.discerned,
           }
         }
       )
