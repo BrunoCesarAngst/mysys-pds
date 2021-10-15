@@ -111,6 +111,7 @@ export function CollectStuff() {
         actionDate: false,
         context: false,
         project: false,
+        completed: false,
       })
     } catch (error) {
       console.log(error)
@@ -434,6 +435,9 @@ export function CollectStuff() {
           <Formik
             initialValues={initialValues}
             onSubmit={(values, { resetForm }) => {
+              const theTitle = values.title
+              const theDesc = values.description
+
               const selectedStuff = stuffs.find((stuff) => stuff.id === idStuff)
 
               if (selectedStuff) {

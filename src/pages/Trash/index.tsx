@@ -134,7 +134,6 @@ export function Trash() {
             date,
             update,
             userId: item.userId,
-            updated: item.updated,
           }
         }
       )
@@ -175,7 +174,6 @@ export function Trash() {
                   idStuff: item.id,
                   title: item.title,
                   description: item.description,
-                  updated: item.updated,
                 })
               }}
             >

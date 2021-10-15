@@ -32,6 +32,8 @@ import { StackNavigationProp } from "@react-navigation/stack"
 import { AppNavigatorParamsList } from "../../routes/types"
 import { ActivityIndicator, Alert } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
+import useStuffStoreDb, { StuffTypeDb } from "../../stores/stuffDb"
+import useStuffStoreFormatted from "../../stores/formattedStuffDb"
 
 type DashboardScreenNavigationProps = StackNavigationProp<
   AppNavigatorParamsList,
@@ -43,23 +45,24 @@ export interface DataInboxList extends DataStuffCardData {
   userId: string
 }
 
-interface HighlightProps {
-  amount: string
-  lastInput: string
-  lastTitle: string
-}
-
-interface IHighlightData {
-  input: HighlightProps
-}
-
 export function Dashboard() {
+  const currentStatusStuffDatabase = useStuffStoreDb((state) => state.stuffsDbs)
+  const addDatabaseStuffInTheStates = useStuffStoreDb(
+    (state) => state.addDatabaseStuffInTheState
+  )
+
+  const formattedStatusStuffDatabase = useStuffStoreFormatted(
+    (state) => state.stuffFormatted
+  )
+  const formattedDatabaseStuffInTheStates = useStuffStoreFormatted(
+    (state) => state.formattedDatabaseStuffInTheState
+  )
+
+  // console.log({ formattedStatusStuffDatabase })
+
   const [isLoading, setIsLoading] = useState(true)
   const [stuffs, setStuffs] = useState<DataInboxList[]>([])
 
-  const [highlightData, setHighlightData] = useState<IHighlightData>(
-    {} as IHighlightData
-  )
   const navigation = useNavigation<DashboardScreenNavigationProps>()
   const route = useRoute<DashboardRouteProps>()
 
@@ -67,21 +70,73 @@ export function Dashboard() {
 
   const { signOut, user } = useAuth()
 
-  function getStuffsTotalCollect(collection: DataInboxList[]) {
-    if (collection.length > 0) {
-      return collection.length.toString()
+  async function getStuffsDb() {
+    try {
+      await db
+        .collection("stuffs")
+        .where("userId", "==", user.userId)
+        .onSnapshot((query) => {
+          const list: StuffTypeDb[] = []
+          query.forEach((doc) => {
+            list.push({ ...(doc.data() as StuffTypeDb), id: doc.id })
+          })
+
+          addDatabaseStuffInTheStates(list)
+          formattedStuffsDb(list)
+          console.log("getStuffsDb")
+        })
+    } catch (error) {
+      console.log("no loadStuffs", error)
+    }
+  }
+
+  function formattedStuffsDb(list: StuffTypeDb[]) {
+    const formattedStuffs = list.map((stuffDB) => {
+      return {
+        id: stuffDB.id,
+        title: stuffDB.title,
+        description: stuffDB.description,
+        date: format(new Date(stuffDB.date), "dd/MM/yy - HH:mm"),
+        update: format(new Date(stuffDB.update), "dd/MM/yy - HH:mm"),
+        userId: stuffDB.userId,
+        discerned: stuffDB.discerned,
+        fastAction: stuffDB.fastAction,
+        incubate: stuffDB.incubate,
+        reference: stuffDB.reference,
+        trash: stuffDB.trash,
+        delegated: stuffDB.delegated,
+        actionDate: stuffDB.actionDate,
+        context: stuffDB.context,
+        project: stuffDB.project,
+        completed: stuffDB.completed,
+      }
+    })
+
+    console.log("formattedStuffsDb")
+
+    formattedDatabaseStuffInTheStates(formattedStuffs)
+    setIsLoading(false)
+  }
+
+  function stuffsTotalCollect() {
+    if (currentStatusStuffDatabase.length > 0) {
+      console.log("stuffsTotalCollect")
+      console.log(currentStatusStuffDatabase.length)
+      return currentStatusStuffDatabase.length.toString()
     } else {
       return "There is nothing..."
     }
   }
+  const total = stuffsTotalCollect()
+  // console.log({ total })
 
-  function getLastCollectTitle(collection: DataInboxList[]) {
-    if (collection.length > 0) {
+  function getTitleLastEntry() {
+    if (currentStatusStuffDatabase.length > 0) {
       const lastInput = Math.max.apply(
         Math,
-        collection.map((item) => new Date(item.date).getTime())
+        currentStatusStuffDatabase.map((item) => new Date(item.date).getTime())
       )
-      const lastTitle = collection.find((item) => {
+      const lastTitle = currentStatusStuffDatabase.find((item) => {
         const date = new Date(item.date).getTime()
         if (date === lastInput) {
           return item.title
@@ -93,12 +148,14 @@ export function Dashboard() {
       return "to discern "
     }
   }
+  const lastTitle = getTitleLastEntry()
+  // console.log({ lastTitle })
 
-  function getLastCollectDate(collection: DataInboxList[]) {
-    if (collection.length > 0) {
+  function getDateLastEntry() {
+    if (currentStatusStuffDatabase.length > 0) {
       const lastInput = Math.max.apply(
         Math,
-        collection.map((item) => new Date(item.date).getTime())
+        currentStatusStuffDatabase.map((item) => new Date(item.date).getTime())
       )
 
       return format(new Date(lastInput), "dd/MM/yy - HH:mm")
@@ -106,75 +163,32 @@ export function Dashboard() {
       return "here."
     }
   }
+  const lastDate = getDateLastEntry()
+  // console.log({ lastDate })
 
-  async function loadStuffs() {
-    try {
-      await db
-        .collection("stuffs")
-        .where("userId", "==", user.userId)
-        .where("discerned", "==", false)
-        .onSnapshot((query) => {
-          const list: DataInboxList[] = []
-          query.forEach((doc) => {
-            list.push({ ...(doc.data() as DataInboxList), id: doc.id })
-          })
+  function gettingStuffsInput() {
+    const entranceStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+      return stuff.discerned === false && stuff.completed === false
+    })
 
-          handlingTheStuffThatComesFromTheDatabase(list)
-        })
-    } catch (error) {
-      console.log("no loadStuffs", error)
-    }
+    setStuffs(entranceStuffs)
+
+    console.log({ entranceStuffs })
   }
 
   const now = format(new Date(), "dd/MM/yy - HH:mm")
 
-  async function handlingTheStuffThatComesFromTheDatabase(
-    list: DataInboxList[]
-  ) {
-    try {
-      const lastInputDate = getLastCollectDate(list)
-      const totalStuffs = getStuffsTotalCollect(list)
-      const lastTitle = getLastCollectTitle(list)
+  useEffect(() => {
+    console.log("useEffect")
 
-      const collectedStuffs: DataInboxList[] = await list.map(
-        (item: DataInboxList) => {
-          const teste1 = new Date(item.date)
-          const teste2 = new Date(item.update)
-
-          const date = format(teste1, "dd/MM/yy - HH:mm")
-          const update = format(teste2, "dd/MM/yy - HH:mm")
-
-          return {
-            id: item.id,
-            title: item.title,
-            description: item.description,
-            date,
-            update,
-            userId: item.userId,
-            discerned: item.discerned,
-          }
-        }
-      )
-
-      setStuffs(collectedStuffs)
-
-      setHighlightData({
-        input: {
-          amount: totalStuffs,
-          lastInput: lastInputDate,
-          lastTitle: lastTitle,
-        },
-      })
-    } catch (error) {
-      console.log("erro no map", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    gettingStuffsInput()
+  }, [formattedStatusStuffDatabase])
 
   useFocusEffect(
     useCallback(() => {
-      loadStuffs()
+      console.log("useFocusEffect")
+
+      getStuffsDb()
     }, [])
   )
 
@@ -209,9 +223,9 @@ export function Dashboard() {
             <HighlightCard
               type="input"
               title="Entries"
-              amount={highlightData.input.amount}
-              lastInput={highlightData.input.lastInput}
-              lastTitle={highlightData.input.lastTitle}
+              amount={total}
+              lastInput={lastDate}
+              lastTitle={lastTitle}
             />
             <HighlightCard
               type="demand"
