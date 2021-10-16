@@ -2,7 +2,8 @@ type CollectProps = {
   idStuff?: string
   title?: string
   description?: string
-  updated?: boolean
+  discerned?: boolean
+  completed?: boolean
 }
 
 type AuthProps = {

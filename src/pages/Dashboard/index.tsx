@@ -136,7 +136,7 @@ export function Dashboard() {
       console.log("stuffsTotalCollect")
       return entranceStuffsTotal.length.toString()
     } else {
-      return "There is nothing..."
+      return "Não há coleta!"
     }
   }
   const total = stuffsTotalCollect()
@@ -160,7 +160,7 @@ export function Dashboard() {
 
       return lastTitle!.title
     } else {
-      return "to discern "
+      return "Colete "
     }
   }
   const lastTitle = getTitleLastEntry()
@@ -178,7 +178,7 @@ export function Dashboard() {
 
       return format(new Date(lastInput), "dd/MM/yy - HH:mm")
     } else {
-      return "here."
+      return "Clicando em coletar."
     }
   }
   const lastDate = getDateLastEntry()
@@ -191,7 +191,7 @@ export function Dashboard() {
     if (discernedStuffs.length > 0) {
       return discernedStuffs.length.toString()
     } else {
-      return "There is nothing..."
+      return "Não há demandas!"
     }
   }
   const discernedStuffsTotal = gettingStuffsDiscerned()
@@ -214,7 +214,7 @@ export function Dashboard() {
 
       return lastTitleOfDiscerned!.title
     } else {
-      return "to discern "
+      return "Esvazie a mente "
     }
   }
   const lastTitleOfDiscerned = getTitleLastDiscerned()
@@ -231,7 +231,7 @@ export function Dashboard() {
 
       return format(new Date(lastInput), "dd/MM/yy - HH:mm")
     } else {
-      return "here."
+      return "Clicando em coletar."
     }
   }
   const lastDateDiscerned = getDateLastDiscerned()
@@ -243,7 +243,7 @@ export function Dashboard() {
     if (completedStuffs.length > 0) {
       return completedStuffs.length.toString()
     } else {
-      return "There is nothing..."
+      return '"Mate" - Elimine ...'
     }
   }
   const completedStuffsTotal = gettingStuffsCompleted()
@@ -266,7 +266,7 @@ export function Dashboard() {
 
       return lastTitleOfCompleted!.title
     } else {
-      return "to discern "
+      return "tudo aquilo "
     }
   }
   const lastTitleOfCompleted = getTitleLastCompleted()
@@ -283,7 +283,7 @@ export function Dashboard() {
 
       return format(new Date(lastInput), "dd/MM/yy - HH:mm")
     } else {
-      return "here."
+      return "que te prende."
     }
   }
   const lastDateCompleted = getDateLastCompleted()

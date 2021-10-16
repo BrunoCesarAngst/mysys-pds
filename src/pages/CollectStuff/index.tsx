@@ -35,12 +35,20 @@ interface CollectionFormData {
   date: string
   update: string
   userId: string
-  updated: boolean
-  fastAction: boolean
+  discerned: boolean
+  fastAction?: boolean
+  incubate?: boolean
+  reference?: boolean
+  trash?: boolean
+  delegated?: boolean
+  actionDate?: boolean
+  context?: boolean
+  project?: boolean
+  completed?: boolean
 }
 
 const schemaForm = yup.object().shape({
-  title: yup.string().required("The title must be reported."),
+  title: yup.string().required("O título deve ser informado."),
   description: yup.string(),
 })
 export function CollectStuff() {
@@ -51,7 +59,7 @@ export function CollectStuff() {
   const idStuff = route.params?.idStuff
   const title = route.params?.title
   const description = route.params?.description
-  const updated = route.params?.updated
+  const discerned = route.params?.discerned
 
   // const [initialValues, setInitialValues] = useState({} as Stuff)
 
@@ -63,13 +71,6 @@ export function CollectStuff() {
   const [stuffs, setStuffs] = useState<CollectionFormData[]>([])
 
   const { user } = useAuth()
-
-  // useEffect(() => {
-  //   setInitialValues({
-  //     title: title ? title : "",
-  //     description: description ? description : "",
-  //   })
-  // }, [title, description])
 
   useEffect(() => {
     db.collection("stuffs").onSnapshot((query) => {
@@ -87,6 +88,7 @@ export function CollectStuff() {
         title: values.title,
         description: values.description,
         update: new Date().getTime(),
+        dicerned: true,
       })
     } catch (error) {
       console.log(error)
@@ -134,6 +136,14 @@ export function CollectStuff() {
             try {
               db.collection("stuffs").doc(selectedStuff?.id).update({
                 project: true,
+                fastAction: false,
+                incubate: false,
+                reference: false,
+                trash: false,
+                delegated: false,
+                actionDate: false,
+                context: false,
+                completed: false,
               })
             } catch (error) {
               console.log(error)
@@ -158,6 +168,14 @@ export function CollectStuff() {
             try {
               db.collection("stuffs").doc(selectedStuff?.id).update({
                 context: true,
+                project: false,
+                fastAction: false,
+                incubate: false,
+                reference: false,
+                trash: false,
+                delegated: false,
+                actionDate: false,
+                completed: false,
               })
             } catch (error) {
               console.log(error)
@@ -182,6 +200,14 @@ export function CollectStuff() {
             try {
               db.collection("stuffs").doc(selectedStuff?.id).update({
                 actionDate: true,
+                project: false,
+                fastAction: false,
+                incubate: false,
+                reference: false,
+                trash: false,
+                delegated: false,
+                context: false,
+                completed: false,
               })
             } catch (error) {
               console.log(error)
@@ -206,6 +232,14 @@ export function CollectStuff() {
             try {
               db.collection("stuffs").doc(selectedStuff?.id).update({
                 delegated: true,
+                project: false,
+                fastAction: false,
+                incubate: false,
+                reference: false,
+                trash: false,
+                actionDate: false,
+                context: false,
+                completed: false,
               })
             } catch (error) {
               console.log(error)
@@ -274,6 +308,14 @@ export function CollectStuff() {
             try {
               db.collection("stuffs").doc(selectedStuff?.id).update({
                 fastAction: true,
+                project: false,
+                incubate: false,
+                reference: false,
+                trash: false,
+                delegated: false,
+                actionDate: false,
+                context: false,
+                completed: false,
               })
             } catch (error) {
               console.log(error)
@@ -323,6 +365,14 @@ export function CollectStuff() {
             try {
               db.collection("stuffs").doc(selectedStuff?.id).update({
                 trash: true,
+                project: false,
+                fastAction: false,
+                incubate: false,
+                reference: false,
+                delegated: false,
+                actionDate: false,
+                context: false,
+                completed: false,
               })
             } catch (error) {
               console.log(error)
@@ -338,6 +388,14 @@ export function CollectStuff() {
             try {
               db.collection("stuffs").doc(selectedStuff?.id).update({
                 incubate: true,
+                project: false,
+                fastAction: false,
+                reference: false,
+                trash: false,
+                delegated: false,
+                actionDate: false,
+                context: false,
+                completed: false,
               })
             } catch (error) {
               console.log(error)
@@ -353,6 +411,14 @@ export function CollectStuff() {
             try {
               db.collection("stuffs").doc(selectedStuff?.id).update({
                 reference: true,
+                project: false,
+                fastAction: false,
+                incubate: false,
+                trash: false,
+                delegated: false,
+                actionDate: false,
+                context: false,
+                completed: false,
               })
             } catch (error) {
               console.log(error)
@@ -391,6 +457,15 @@ export function CollectStuff() {
     try {
       await db.collection("stuffs").doc(selectedStuff?.id).update({
         discerned: true,
+        project: false,
+        fastAction: false,
+        incubate: false,
+        reference: false,
+        trash: false,
+        delegated: false,
+        actionDate: false,
+        context: false,
+        completed: false,
       })
     } catch (error) {
       console.log(error)
@@ -420,6 +495,55 @@ export function CollectStuff() {
     console.log("was edited")
   }
 
+  async function ActionComplete(
+    values: Stuff,
+    selectedStuff: CollectionFormData
+  ) {
+    Alert.alert(
+      `Isso: ${values.title}`,
+      "Essa ação foi concluída, ou quer colocar no lixo?",
+      [
+        {
+          text: "Vai pro lixo",
+          onPress: () => {
+            console.log("was reported as no action reference")
+            try {
+              db.collection("stuffs").doc(selectedStuff?.id).update({
+                trash: true,
+              })
+            } catch (error) {
+              console.log(error)
+              Alert.alert("Não deu para editar!")
+            }
+          },
+          style: "cancel",
+        },
+        {
+          text: "Não",
+          onPress: () => {
+            edit(values, selectedStuff)
+          },
+        },
+        {
+          text: "Sim",
+          onPress: () => {
+            console.log("was reported as no action reference")
+            try {
+              db.collection("stuffs").doc(selectedStuff?.id).update({
+                completed: true,
+              })
+            } catch (error) {
+              console.log(error)
+              Alert.alert("Não deu para editar!")
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    )
+    console.log("was edited")
+  }
+
   function NewStuff(selectedStuff: CollectionFormData) {
     return (
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -440,7 +564,10 @@ export function CollectStuff() {
 
               const selectedStuff = stuffs.find((stuff) => stuff.id === idStuff)
 
-              if (selectedStuff) {
+              if (selectedStuff?.discerned === true) {
+                console.log("oi")
+                ActionComplete(values, selectedStuff)
+              } else if (selectedStuff) {
                 editStuff(values, selectedStuff)
                 edit(values, selectedStuff)
               } else {

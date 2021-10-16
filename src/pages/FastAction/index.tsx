@@ -104,6 +104,8 @@ export function FastAction() {
                       idStuff: item.id,
                       title: item.title,
                       description: item.description,
+                      discerned: item.discerned,
+                      completed: item.completed,
                     })
                   }}
                 >
