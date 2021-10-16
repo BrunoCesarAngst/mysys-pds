@@ -148,7 +148,7 @@ function ListingScreen() {
         <UserWrapper>
           <UserInfo>
             <User>
-              <UserName>The lists</UserName>
+              <UserName>As listas</UserName>
             </User>
           </UserInfo>
         </UserWrapper>
@@ -160,7 +160,11 @@ function ListingScreen() {
             navigation.navigate("FastAction")
           }}
         >
-          <ListCard type="fast" title="Fast" amount={fastStuffsTotal} />
+          <ListCard
+            type="fast"
+            title="Ações Rápidas"
+            amount={fastStuffsTotal}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -170,7 +174,7 @@ function ListingScreen() {
         >
           <ListCard
             type="context"
-            title="Context"
+            title="Ações de Contexto"
             amount={contextStuffsTotal}
           />
         </TouchableOpacity>
@@ -180,7 +184,11 @@ function ListingScreen() {
             navigation.navigate("DatedAction")
           }}
         >
-          <ListCard type="date" title="Date" amount={datedActionStuffsTotal} />
+          <ListCard
+            type="date"
+            title="Agenda"
+            amount={datedActionStuffsTotal}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -190,7 +198,7 @@ function ListingScreen() {
         >
           <ListCard
             type="delegated"
-            title="Delegated"
+            title="Ações Delegadas"
             amount={delegatedStuffsTotal}
           />
         </TouchableOpacity>
@@ -202,7 +210,7 @@ function ListingScreen() {
         >
           <ListCard
             type="project"
-            title="Project"
+            title="Projetos"
             amount={projectStuffsTotal}
           />
         </TouchableOpacity>
@@ -214,7 +222,7 @@ function ListingScreen() {
         >
           <ListCard
             type="incubated"
-            title="Incubated"
+            title="Incubadora"
             amount={incubatedStuffsTotal}
           />
         </TouchableOpacity>
@@ -226,7 +234,7 @@ function ListingScreen() {
         >
           <ListCard
             type="reference"
-            title="Reference"
+            title="Referências"
             amount={referenceStuffsTotal}
           />
         </TouchableOpacity>
@@ -236,7 +244,7 @@ function ListingScreen() {
             navigation.navigate("Trash")
           }}
         >
-          <ListCard type="trash" title="Trash" amount={trashStuffsTotal} />
+          <ListCard type="trash" title="Lixeira" amount={trashStuffsTotal} />
         </TouchableOpacity>
       </HighlightCards>
     </Container>
@@ -249,7 +257,11 @@ export function Listing() {
   const navigation = useNavigation<ListingScreenNavigationProps>()
 
   return (
-    <ListingStack.Navigator>
+    <ListingStack.Navigator
+      screenOptions={{
+        animationEnabled: true,
+      }}
+    >
       <ListingStack.Screen
         name="The Lists"
         component={ListingScreen}
@@ -260,7 +272,7 @@ export function Listing() {
         name="FastAction"
         component={FastAction}
         options={{
-          title: "Fast Action",
+          title: "Ações Rápidas",
           headerStyle: { backgroundColor: "#847577" },
           headerTintColor: "#ffffff",
         }}
@@ -270,7 +282,7 @@ export function Listing() {
         name="Context"
         component={Context}
         options={{
-          title: "Context",
+          title: "Ações de Contexto",
           headerStyle: { backgroundColor: "#847577" },
           headerTintColor: "#ffffff",
         }}
@@ -280,7 +292,7 @@ export function Listing() {
         name="DatedAction"
         component={DatedAction}
         options={{
-          title: "Dated Action",
+          title: "Agenda",
           headerStyle: { backgroundColor: "#847577" },
           headerTintColor: "#ffffff",
         }}
@@ -290,7 +302,7 @@ export function Listing() {
         name="Delegated"
         component={Delegated}
         options={{
-          title: "Delegated",
+          title: "Ações Delegadas",
           headerStyle: { backgroundColor: "#847577" },
           headerTintColor: "#ffffff",
         }}
@@ -300,7 +312,7 @@ export function Listing() {
         name="Project"
         component={Project}
         options={{
-          title: "Project",
+          title: "Projetos",
           headerStyle: { backgroundColor: "#847577" },
           headerTintColor: "#ffffff",
         }}
@@ -310,7 +322,7 @@ export function Listing() {
         name="Incubated"
         component={Incubated}
         options={{
-          title: "Incubated",
+          title: "Incubadora",
           headerStyle: { backgroundColor: "#847577" },
           headerTintColor: "#ffffff",
         }}
@@ -320,7 +332,7 @@ export function Listing() {
         name="Reference"
         component={Reference}
         options={{
-          title: "Reference",
+          title: "Referências",
           headerStyle: { backgroundColor: "#847577" },
           headerTintColor: "#ffffff",
         }}
@@ -330,7 +342,7 @@ export function Listing() {
         name="Trash"
         component={Trash}
         options={{
-          title: "Trash",
+          title: "Lixeira",
           headerStyle: { backgroundColor: "#847577" },
           headerTintColor: "#ffffff",
         }}

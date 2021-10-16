@@ -116,13 +116,23 @@ export function Dashboard() {
     formattedDatabaseStuffInTheStates(formattedStuffs)
   }
 
+  function gettingStuffsInput() {
+    const entranceStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+      return stuff.discerned === false && stuff.completed === false
+    })
+
+    setStuffs(entranceStuffs)
+
+    setIsLoading(false)
+
+    console.log({ entranceStuffs })
+  }
+
   function stuffsTotalCollect() {
-    if (currentStatusStuffDatabase.length > 0) {
-      const entranceStuffsTotal = formattedStatusStuffDatabase.filter(
-        (stuff) => {
-          return stuff.discerned === false && stuff.completed === false
-        }
-      )
+    const entranceStuffsTotal = formattedStatusStuffDatabase.filter((stuff) => {
+      return stuff.discerned === false && stuff.completed === false
+    })
+    if (entranceStuffsTotal.length > 0) {
       console.log("stuffsTotalCollect")
       return entranceStuffsTotal.length.toString()
     } else {
@@ -133,10 +143,10 @@ export function Dashboard() {
   // console.log({ total })
 
   function getTitleLastEntry() {
-    if (currentStatusStuffDatabase.length > 0) {
-      const stuffsCompleted = currentStatusStuffDatabase.filter((stuff) => {
-        return stuff.discerned === false && stuff.completed === false
-      })
+    const stuffsCompleted = currentStatusStuffDatabase.filter((stuff) => {
+      return stuff.discerned === false && stuff.completed === false
+    })
+    if (stuffsCompleted.length > 0) {
       const lastInput = Math.max.apply(
         Math,
         stuffsCompleted.map((stuff) => new Date(stuff.date).getTime())
@@ -157,10 +167,10 @@ export function Dashboard() {
   // console.log({ lastTitle })
 
   function getDateLastEntry() {
-    if (currentStatusStuffDatabase.length > 0) {
-      const stuffsCompleted = currentStatusStuffDatabase.filter((stuff) => {
-        return stuff.discerned === false && stuff.completed === false
-      })
+    const stuffsCompleted = currentStatusStuffDatabase.filter((stuff) => {
+      return stuff.discerned === false && stuff.completed === false
+    })
+    if (stuffsCompleted.length > 0) {
       const lastInput = Math.max.apply(
         Math,
         stuffsCompleted.map((stuff) => new Date(stuff.date).getTime())
@@ -174,23 +184,11 @@ export function Dashboard() {
   const lastDate = getDateLastEntry()
   // console.log({ lastDate })
 
-  function gettingStuffsInput() {
-    const entranceStuffs = formattedStatusStuffDatabase.filter((stuff) => {
-      return stuff.discerned === false && stuff.completed === false
-    })
-
-    setStuffs(entranceStuffs)
-
-    setIsLoading(false)
-
-    console.log({ entranceStuffs })
-  }
-
   function gettingStuffsDiscerned() {
-    if (currentStatusStuffDatabase.length > 0) {
-      const discernedStuffs = formattedStatusStuffDatabase.filter((stuff) => {
-        return stuff.discerned === true && stuff.completed === false
-      })
+    const discernedStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+      return stuff.discerned === true && stuff.completed === false
+    })
+    if (discernedStuffs.length > 0) {
       return discernedStuffs.length.toString()
     } else {
       return "There is nothing..."
@@ -199,10 +197,10 @@ export function Dashboard() {
   const discernedStuffsTotal = gettingStuffsDiscerned()
 
   function getTitleLastDiscerned() {
-    if (currentStatusStuffDatabase.length > 0) {
-      const stuffsDiscerned = currentStatusStuffDatabase.filter((stuff) => {
-        return stuff.discerned === true && stuff.completed === false
-      })
+    const stuffsDiscerned = currentStatusStuffDatabase.filter((stuff) => {
+      return stuff.discerned === true && stuff.completed === false
+    })
+    if (stuffsDiscerned.length > 0) {
       const lastInput = Math.max.apply(
         Math,
         stuffsDiscerned.map((stuff) => new Date(stuff.date).getTime())
@@ -222,10 +220,10 @@ export function Dashboard() {
   const lastTitleOfDiscerned = getTitleLastDiscerned()
 
   function getDateLastDiscerned() {
-    if (currentStatusStuffDatabase.length > 0) {
-      const stuffsDiscerned = currentStatusStuffDatabase.filter((stuff) => {
-        return stuff.discerned === true && stuff.completed === false
-      })
+    const stuffsDiscerned = currentStatusStuffDatabase.filter((stuff) => {
+      return stuff.discerned === true && stuff.completed === false
+    })
+    if (stuffsDiscerned.length > 0) {
       const lastInput = Math.max.apply(
         Math,
         stuffsDiscerned.map((stuff) => new Date(stuff.date).getTime())
@@ -239,10 +237,10 @@ export function Dashboard() {
   const lastDateDiscerned = getDateLastDiscerned()
 
   function gettingStuffsCompleted() {
-    if (currentStatusStuffDatabase.length > 0) {
-      const completedStuffs = formattedStatusStuffDatabase.filter((stuff) => {
-        return stuff.discerned === true && stuff.completed === true
-      })
+    const completedStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+      return stuff.discerned === true && stuff.completed === true
+    })
+    if (completedStuffs.length > 0) {
       return completedStuffs.length.toString()
     } else {
       return "There is nothing..."
@@ -251,10 +249,10 @@ export function Dashboard() {
   const completedStuffsTotal = gettingStuffsCompleted()
 
   function getTitleLastCompleted() {
-    if (currentStatusStuffDatabase.length > 0) {
-      const stuffsCompleted = currentStatusStuffDatabase.filter((stuff) => {
-        return stuff.completed
-      })
+    const stuffsCompleted = currentStatusStuffDatabase.filter((stuff) => {
+      return stuff.completed
+    })
+    if (stuffsCompleted.length > 0) {
       const lastInput = Math.max.apply(
         Math,
         stuffsCompleted.map((stuff) => new Date(stuff.date).getTime())
@@ -274,10 +272,10 @@ export function Dashboard() {
   const lastTitleOfCompleted = getTitleLastCompleted()
 
   function getDateLastCompleted() {
-    if (currentStatusStuffDatabase.length > 0) {
-      const stuffsCompleted = currentStatusStuffDatabase.filter((stuff) => {
-        return stuff.completed
-      })
+    const stuffsCompleted = currentStatusStuffDatabase.filter((stuff) => {
+      return stuff.completed
+    })
+    if (stuffsCompleted.length > 0) {
       const lastInput = Math.max.apply(
         Math,
         stuffsCompleted.map((stuff) => new Date(stuff.date).getTime())
@@ -321,7 +319,7 @@ export function Dashboard() {
                   }}
                 />
                 <User>
-                  <UserGreeting>Hi,</UserGreeting>
+                  <UserGreeting>Olá,</UserGreeting>
                   <UserName>{user.name}</UserName>
                 </User>
               </UserInfo>
@@ -334,21 +332,21 @@ export function Dashboard() {
           <HighlightCards>
             <HighlightCard
               type="input"
-              title="Entries"
+              title="Entradas"
               amount={total}
               lastInput={lastDate}
               lastTitle={lastTitle}
             />
             <HighlightCard
               type="demand"
-              title="Demands"
+              title="Demandas"
               amount={discernedStuffsTotal}
               lastInput={lastDateDiscerned}
               lastTitle={lastTitleOfDiscerned}
             />
             <HighlightCard
               type="done"
-              title="Concluded"
+              title="Concluídas"
               amount={completedStuffsTotal}
               lastInput={lastDateCompleted}
               lastTitle={lastTitleOfCompleted}
@@ -356,7 +354,7 @@ export function Dashboard() {
           </HighlightCards>
 
           <Inbox>
-            <Title>Inbox</Title>
+            <Title>Caixa de Entradas</Title>
 
             <InboxList
               data={stuffs.sort((a, b) => a.date.localeCompare(b.date))}

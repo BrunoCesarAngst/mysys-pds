@@ -124,11 +124,11 @@ export function CollectStuff() {
     selectedStuff: CollectionFormData
   ) {
     Alert.alert(
-      `This action ${values.title}, depends on one or more actions`,
-      "Shall we break it down into more actions?",
+      `Essa ação ${values.title}, depende de uma ou mais ações.`,
+      "Devemos dividi-la em mais ações?",
       [
         {
-          text: "Project",
+          text: "Projeto",
           onPress: () => {
             console.log("was reported as a project")
             try {
@@ -148,11 +148,11 @@ export function CollectStuff() {
 
   async function context(values: Stuff, selectedStuff: CollectionFormData) {
     Alert.alert(
-      `This action ${values.title} needs a context!`,
-      "What is the best context to act on it?",
+      `Essa ação ${values.title} precisa de um contexto!`,
+      "Qual é o melhor contexto para agir sobre ele?",
       [
         {
-          text: "Context",
+          text: "Contexto",
           onPress: () => {
             console.log("it was reported as a context specific action")
             try {
@@ -172,11 +172,11 @@ export function CollectStuff() {
 
   async function actionDate(values: Stuff, selectedStuff: CollectionFormData) {
     Alert.alert(
-      `This action ${values.title}, needs a date!`,
-      "What is the best date to act on it?",
+      `Essa ação ${values.title}, precisa de uma data!`,
+      "Qual é a melhor data para agir sobre ela?",
       [
         {
-          text: "Action date",
+          text: "Agendar",
           onPress: () => {
             console.log("it was reported as a date-specific action")
             try {
@@ -196,8 +196,8 @@ export function CollectStuff() {
 
   async function delegate(values: Stuff, selectedStuff: CollectionFormData) {
     Alert.alert(
-      `This action ${values.title}, will be delegated`,
-      "Who can best act on this action?",
+      `Essa ação: ${values.title}, vai ser delegada`,
+      "Quem pode agir melhor sobre esta ação?",
       [
         {
           text: "Fulano",
@@ -223,25 +223,25 @@ export function CollectStuff() {
     selectedStuff: CollectionFormData
   ) {
     Alert.alert(
-      `This action ${values.title}, has a condition!`,
-      "Does it need to be in context, does it have a specific date, or is it better that I delegate it?",
+      `Essa ação: ${values.title}, para ser executada, tem uma condição?`,
+      "Preciso estar em um contexto, tem uma data específica, ou é melhor que eu a delegue?",
       [
         {
-          text: "Context",
+          text: "Contexto",
           onPress: () => {
             context(values, selectedStuff)
           },
           style: "cancel",
         },
         {
-          text: "Date",
+          text: "Agenda",
           onPress: () => {
             actionDate(values, selectedStuff)
           },
           style: "cancel",
         },
         {
-          text: "Delegate",
+          text: "Delegar",
           onPress: () => {
             delegate(values, selectedStuff)
           },
@@ -257,18 +257,18 @@ export function CollectStuff() {
     selectedStuff: CollectionFormData
   ) {
     Alert.alert(
-      `This action: ${values.title}`,
-      "This takes less than 2 minutes to do?",
+      `Essa ação: ${values.title}`,
+      "Isso leva menos de 2 minutos para ser feito?",
       [
         {
-          text: "No",
+          text: "Não",
           onPress: () => {
             conditionalAction(values, selectedStuff)
           },
           style: "cancel",
         },
         {
-          text: "Yes",
+          text: "Sim",
           onPress: () => {
             console.log("was reported to be simple action of 2 min")
             try {
@@ -289,17 +289,17 @@ export function CollectStuff() {
 
   async function haveAction(values: Stuff, selectedStuff: CollectionFormData) {
     Alert.alert(
-      `The Action : ${values.title}`,
-      "Does it have a single simple action?",
+      `Essa ação: ${values.title}`,
+      "É uma única ação simples?",
       [
         {
-          text: "No",
+          text: "Não",
           onPress: () => {
             compoundAction(values, selectedStuff)
           },
         },
         {
-          text: "Yes",
+          text: "Sim",
           onPress: () => {
             simpleAction(values, selectedStuff)
           },
@@ -313,11 +313,11 @@ export function CollectStuff() {
 
   async function noAction(values: Stuff, selectedStuff: CollectionFormData) {
     Alert.alert(
-      `That information: ${values.title}`,
-      "Go where?",
+      `Essa informação: ${values.title}`,
+      "Vai para onde?",
       [
         {
-          text: "Trash",
+          text: "Lixeira",
           onPress: () => {
             console.log("was reported as no action trash")
             try {
@@ -332,7 +332,7 @@ export function CollectStuff() {
           style: "cancel",
         },
         {
-          text: "Incubate",
+          text: "Incubadora",
           onPress: () => {
             console.log("was reported as no action incubate")
             try {
@@ -347,7 +347,7 @@ export function CollectStuff() {
         },
 
         {
-          text: "Reference",
+          text: "Referências",
           onPress: () => {
             console.log("was reported as no action reference")
             try {
@@ -368,18 +368,18 @@ export function CollectStuff() {
 
   const discern = async (values: Stuff, selectedStuff: CollectionFormData) => {
     Alert.alert(
-      `Stuff: ${values.title}`,
-      "Does it have action or no action?",
+      `Isso: ${values.title}`,
+      "Tem ação ou não tem ação?",
       [
         {
-          text: "No action",
+          text: "Não tem ação",
           onPress: () => {
             noAction(values, selectedStuff)
           },
           style: "cancel",
         },
         {
-          text: "Have action",
+          text: "Tem ação",
           onPress: () => {
             haveAction(values, selectedStuff)
           },
@@ -400,18 +400,18 @@ export function CollectStuff() {
 
   async function edit(values: Stuff, selectedStuff: CollectionFormData) {
     Alert.alert(
-      `Stuff: ${values.title}`,
-      "What do you want to do with this stuff?",
+      `Isto: ${values.title}`,
+      'O que você quer fazer com essas "coisas"?',
       [
         {
-          text: "Nothing",
+          text: "Nada",
           onPress: () => {
             navigation.navigate("Dashboard")
           },
           style: "cancel",
         },
         {
-          text: "Discern",
+          text: "Discernir",
           onPress: () => discern(values, selectedStuff),
         },
       ],
@@ -426,9 +426,9 @@ export function CollectStuff() {
         <Container>
           <Header>
             {idStuff ? (
-              <Title>Edit Stuff</Title>
+              <Title>Editar a coisa</Title>
             ) : (
-              <Title>Collecting Stuff</Title>
+              <Title>Coletar uma coisa</Title>
             )}
           </Header>
 
@@ -469,7 +469,7 @@ export function CollectStuff() {
             }) => (
               <Fields>
                 <TextInput
-                  label="Title"
+                  label="Título"
                   onChangeText={handleChange("title")}
                   onFocus={() => setFieldTouched("title")}
                   value={values.title}
@@ -481,7 +481,7 @@ export function CollectStuff() {
                 ) : null}
 
                 <TextInput
-                  label="Description"
+                  label="Descrição"
                   multiline
                   numberOfLines={3}
                   onChangeText={handleChange("description")}
@@ -494,14 +494,15 @@ export function CollectStuff() {
                   disabled={values.title == "" || errors.title ? true : false}
                 >
                   {idStuff && !touched.title && !touched.description
-                    ? "I want to dicern this stuff"
+                    ? "Quero discernir essa coisa"
                     : idStuff
-                    ? "Edit"
-                    : "Collect"}
+                    ? "Editar"
+                    : "Coletar"}
                 </Button>
                 {idStuff && !touched.title && !touched.description ? (
-                  <Text style={{ fontSize: 12, marginTop: 16, marginLeft: 70 }}>
-                    To edit tap the title or description field.
+                  <Text style={{ fontSize: 12, marginTop: 16, marginLeft: 40 }}>
+                    Para editar, toque no campo título, descrição ou apenas
+                    comece a discernir clicando no botão.
                   </Text>
                 ) : null}
               </Fields>

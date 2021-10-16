@@ -40,6 +40,7 @@ export function AppRoutes() {
         name="Dashboard"
         component={Dashboard}
         options={{
+          title: "Painel",
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons name="list-alt" size={size} color={color} />
           ),
@@ -49,6 +50,7 @@ export function AppRoutes() {
         name="Collect"
         component={CollectStuff}
         options={{
+          title: "Coletar",
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons name="playlist-add" size={size} color={color} />
           ),
@@ -58,6 +60,7 @@ export function AppRoutes() {
         name="Listing"
         component={Listing}
         options={{
+          title: "Listas",
           unmountOnBlur: true,
           tabBarIcon: ({ size, color }) => (
             <MaterialIcons

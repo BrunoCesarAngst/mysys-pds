@@ -15,12 +15,7 @@ export const Container = styled.View`
 `
 
 export const Header = styled.View`
-  width: 100%;
-  height: ${RFPercentage(8)}px;
-
-  background-color: ${({ theme }) => theme.colors.primary};
-
-  justify-content: center;
+  justify-content: space-between;
   align-items: flex-start;
   flex-direction: row;
 `
@@ -35,6 +30,7 @@ export const Title = styled.Text`
   font-size: ${RFValue(18)}px;
   font-family: ${({ theme }) => theme.fonts.regular};
 `
+
 export const InboxList = styled(
   FlatList as new () => FlatList<DataInboxList>
 ).attrs({

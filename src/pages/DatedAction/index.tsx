@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react"
 
 import { useAuth } from "../../hooks/auth"
 
-import { Container, Inbox, Title, InboxList } from "./styles"
+import { Container, Inbox, Title, InboxList, Header } from "./styles"
 
 import { StuffCard } from "../../component/StuffCard"
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/core"
@@ -16,6 +16,7 @@ import {
   FormattedStuffDb,
   useStuffStoreFormatted,
 } from "../../stores/formattedStuffDb"
+import { Switch } from "react-native-paper"
 
 type DatedActionScreenNavigationProps = StackNavigationProp<
   AppNavigatorParamsList,
@@ -30,6 +31,10 @@ export function DatedAction() {
 
   const [isLoading, setIsLoading] = useState(true)
   const [stuffs, setStuffs] = useState<FormattedStuffDb[]>([])
+  const [completed, setCompleted] = useState<FormattedStuffDb[]>([])
+  const [isSwitchOn, setIsSwitchOn] = useState(false)
+
+  const onToggleSwitch = () => setIsSwitchOn(!isSwitchOn)
 
   const navigation = useNavigation<DatedActionScreenNavigationProps>()
   const route = useRoute<DatedActionRouteProps>()
@@ -52,35 +57,86 @@ export function DatedAction() {
     console.log({ datedActionStuffs })
   }
 
+  function gettingStuffsDatedActionCompleted() {
+    const datedActionStuffsCompleted = formattedStatusStuffDatabase.filter(
+      (stuff) => {
+        return (
+          stuff.discerned === true &&
+          stuff.actionDate === true &&
+          stuff.completed === true
+        )
+      }
+    )
+
+    setCompleted(datedActionStuffsCompleted)
+
+    setIsLoading(false)
+
+    console.log({ datedActionStuffsCompleted })
+  }
+
   useFocusEffect(
     useCallback(() => {
       gettingStuffsDatedAction()
+      gettingStuffsDatedActionCompleted()
     }, [formattedStatusStuffDatabase])
   )
 
   return (
-    <Container>
-      <Inbox>
-        <Title>List</Title>
-        <InboxList
-          data={stuffs.sort((a, b) => a.date.localeCompare(b.date))}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("Collect", {
-                  idStuff: item.id,
-                  title: item.title,
-                  description: item.description,
-                  updated: item.updated,
-                })
-              }}
-            >
-              <StuffCard data={item} />
-            </TouchableOpacity>
-          )}
-        />
-      </Inbox>
-    </Container>
+    <>
+      {!isSwitchOn ? (
+        <Container>
+          <Inbox>
+            <Header>
+              <Title>Para fazer</Title>
+              <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />
+            </Header>
+            <InboxList
+              data={stuffs.sort((a, b) => a.date.localeCompare(b.date))}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("Collect", {
+                      idStuff: item.id,
+                      title: item.title,
+                      description: item.description,
+                    })
+                  }}
+                >
+                  <StuffCard data={item} />
+                </TouchableOpacity>
+              )}
+            />
+          </Inbox>
+        </Container>
+      ) : (
+        <Container>
+          <Inbox>
+            <Header>
+              <Title>Feito</Title>
+              <Switch value={isSwitchOn} onValueChange={onToggleSwitch} />
+            </Header>
+            <InboxList
+              data={completed.sort((a, b) => a.date.localeCompare(b.date))}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("Collect", {
+                      idStuff: item.id,
+                      title: item.title,
+                      description: item.description,
+                    })
+                  }}
+                >
+                  <StuffCard data={item} />
+                </TouchableOpacity>
+              )}
+            />
+          </Inbox>
+        </Container>
+      )}
+    </>
   )
 }
