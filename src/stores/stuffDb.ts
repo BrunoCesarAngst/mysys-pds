@@ -1,6 +1,6 @@
 import create from "zustand"
 
-export type StuffTypeDb = {
+type StuffTypeDb = {
   id: string
   title: string
   description: string
@@ -33,4 +33,4 @@ const useStuffStoreDb = create<Store>(
   })
 )
 
-export default useStuffStoreDb
+export { useStuffStoreDb, StuffTypeDb }

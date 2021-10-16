@@ -28,6 +28,7 @@ import { Project } from "../Project"
 import { Incubated } from "../Incubated"
 import { Reference } from "../Reference"
 import { Trash } from "../Trash"
+import { useStuffStoreFormatted } from "../../stores/formattedStuffDb"
 
 type ListingScreenNavigationProps = StackNavigationProp<
   AppNavigatorParamsList,
@@ -36,9 +37,111 @@ type ListingScreenNavigationProps = StackNavigationProp<
 type ListingRouteProps = RouteProp<AppNavigatorParamsList, "Listing">
 
 function ListingScreen() {
+  const formattedStatusStuffDatabase = useStuffStoreFormatted(
+    (state) => state.stuffFormatted
+  )
+
   const theme = useTheme()
 
   const navigation = useNavigation<ListingScreenNavigationProps>()
+
+  function gettingStuffsFast() {
+    const fastStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+      return (
+        stuff.discerned === true &&
+        stuff.fastAction === true &&
+        stuff.completed === false
+      )
+    })
+    return fastStuffs.length.toString()
+  }
+  const fastStuffsTotal = gettingStuffsFast()
+
+  function gettingStuffsContext() {
+    const contextStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+      return (
+        stuff.discerned === true &&
+        stuff.context === true &&
+        stuff.completed === false
+      )
+    })
+    return contextStuffs.length.toString()
+  }
+  const contextStuffsTotal = gettingStuffsContext()
+
+  function gettingStuffsDatedAction() {
+    const datedActionStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+      return (
+        stuff.discerned === true &&
+        stuff.actionDate === true &&
+        stuff.completed === false
+      )
+    })
+    return datedActionStuffs.length.toString()
+  }
+  const datedActionStuffsTotal = gettingStuffsDatedAction()
+
+  function gettingStuffsDelegated() {
+    const delegatedStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+      return (
+        stuff.discerned === true &&
+        stuff.delegated === true &&
+        stuff.completed === false
+      )
+    })
+    return delegatedStuffs.length.toString()
+  }
+  const delegatedStuffsTotal = gettingStuffsDelegated()
+
+  function gettingStuffsProject() {
+    const projectStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+      return (
+        stuff.discerned === true &&
+        stuff.project === true &&
+        stuff.completed === false
+      )
+    })
+    return projectStuffs.length.toString()
+  }
+  const projectStuffsTotal = gettingStuffsProject()
+
+  function gettingStuffsIncubated() {
+    const incubatedStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+      return (
+        stuff.discerned === true &&
+        stuff.incubate === true &&
+        stuff.completed === false
+      )
+    })
+    return incubatedStuffs.length.toString()
+  }
+  const incubatedStuffsTotal = gettingStuffsIncubated()
+
+  function gettingStuffsReference() {
+    const referenceStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+      return (
+        stuff.discerned === true &&
+        stuff.reference === true &&
+        stuff.completed === false
+      )
+    })
+    return referenceStuffs.length.toString()
+  }
+  const referenceStuffsTotal = gettingStuffsReference()
+
+  function gettingStuffsTrash() {
+    const trashStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+      return (
+        stuff.discerned === true &&
+        stuff.trash === true &&
+        stuff.completed === false
+      )
+    })
+
+    return trashStuffs.length.toString()
+  }
+  const trashStuffsTotal = gettingStuffsTrash()
+
   return (
     <Container>
       <Header>
@@ -57,7 +160,7 @@ function ListingScreen() {
             navigation.navigate("FastAction")
           }}
         >
-          <ListCard type="fast" title="Fast" amount="15" />
+          <ListCard type="fast" title="Fast" amount={fastStuffsTotal} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -65,7 +168,11 @@ function ListingScreen() {
             navigation.navigate("Context")
           }}
         >
-          <ListCard type="context" title="Context" amount="37" />
+          <ListCard
+            type="context"
+            title="Context"
+            amount={contextStuffsTotal}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -73,7 +180,7 @@ function ListingScreen() {
             navigation.navigate("DatedAction")
           }}
         >
-          <ListCard type="date" title="Date" amount="37" />
+          <ListCard type="date" title="Date" amount={datedActionStuffsTotal} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -81,7 +188,11 @@ function ListingScreen() {
             navigation.navigate("Delegated")
           }}
         >
-          <ListCard type="delegated" title="Delegated" amount="37" />
+          <ListCard
+            type="delegated"
+            title="Delegated"
+            amount={delegatedStuffsTotal}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -89,7 +200,11 @@ function ListingScreen() {
             navigation.navigate("Project")
           }}
         >
-          <ListCard type="project" title="Project" amount="37" />
+          <ListCard
+            type="project"
+            title="Project"
+            amount={projectStuffsTotal}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -97,7 +212,11 @@ function ListingScreen() {
             navigation.navigate("Incubated")
           }}
         >
-          <ListCard type="incubated" title="Incubated" amount="37" />
+          <ListCard
+            type="incubated"
+            title="Incubated"
+            amount={incubatedStuffsTotal}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -105,7 +224,11 @@ function ListingScreen() {
             navigation.navigate("Reference")
           }}
         >
-          <ListCard type="reference" title="Reference" amount="37" />
+          <ListCard
+            type="reference"
+            title="Reference"
+            amount={referenceStuffsTotal}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -113,7 +236,7 @@ function ListingScreen() {
             navigation.navigate("Trash")
           }}
         >
-          <ListCard type="trash" title="Trash" amount="95" />
+          <ListCard type="trash" title="Trash" amount={trashStuffsTotal} />
         </TouchableOpacity>
       </HighlightCards>
     </Container>

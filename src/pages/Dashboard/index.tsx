@@ -24,7 +24,7 @@ import {
 } from "./styles"
 
 import { HighlightCard } from "../../component/HighlightCard"
-import { DataStuffCardData, StuffCard } from "../../component/StuffCard"
+import { StuffCard } from "../../component/StuffCard"
 import { RouteProp, useFocusEffect, useRoute } from "@react-navigation/core"
 import { TouchableOpacity } from "react-native-gesture-handler"
 import { useNavigation } from "@react-navigation/native"
@@ -32,18 +32,17 @@ import { StackNavigationProp } from "@react-navigation/stack"
 import { AppNavigatorParamsList } from "../../routes/types"
 import { ActivityIndicator, Alert } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage"
-import useStuffStoreDb, { StuffTypeDb } from "../../stores/stuffDb"
-import useStuffStoreFormatted from "../../stores/formattedStuffDb"
+import { useStuffStoreDb, StuffTypeDb } from "../../stores/stuffDb"
+import {
+  useStuffStoreFormatted,
+  FormattedStuffDb,
+} from "../../stores/formattedStuffDb"
 
 type DashboardScreenNavigationProps = StackNavigationProp<
   AppNavigatorParamsList,
   "Dashboard"
 >
 type DashboardRouteProps = RouteProp<AppNavigatorParamsList, "Dashboard">
-export interface DataInboxList extends DataStuffCardData {
-  id: string
-  userId: string
-}
 
 export function Dashboard() {
   const currentStatusStuffDatabase = useStuffStoreDb((state) => state.stuffsDbs)
@@ -61,7 +60,7 @@ export function Dashboard() {
   // console.log({ formattedStatusStuffDatabase })
 
   const [isLoading, setIsLoading] = useState(true)
-  const [stuffs, setStuffs] = useState<DataInboxList[]>([])
+  const [stuffs, setStuffs] = useState<FormattedStuffDb[]>([])
 
   const navigation = useNavigation<DashboardScreenNavigationProps>()
   const route = useRoute<DashboardRouteProps>()
@@ -115,14 +114,17 @@ export function Dashboard() {
     console.log("formattedStuffsDb")
 
     formattedDatabaseStuffInTheStates(formattedStuffs)
-    setIsLoading(false)
   }
 
   function stuffsTotalCollect() {
     if (currentStatusStuffDatabase.length > 0) {
+      const entranceStuffsTotal = formattedStatusStuffDatabase.filter(
+        (stuff) => {
+          return stuff.discerned === false && stuff.completed === false
+        }
+      )
       console.log("stuffsTotalCollect")
-      console.log(currentStatusStuffDatabase.length)
-      return currentStatusStuffDatabase.length.toString()
+      return entranceStuffsTotal.length.toString()
     } else {
       return "There is nothing..."
     }
@@ -132,14 +134,17 @@ export function Dashboard() {
 
   function getTitleLastEntry() {
     if (currentStatusStuffDatabase.length > 0) {
+      const stuffsCompleted = currentStatusStuffDatabase.filter((stuff) => {
+        return stuff.discerned === false && stuff.completed === false
+      })
       const lastInput = Math.max.apply(
         Math,
-        currentStatusStuffDatabase.map((item) => new Date(item.date).getTime())
+        stuffsCompleted.map((stuff) => new Date(stuff.date).getTime())
       )
-      const lastTitle = currentStatusStuffDatabase.find((item) => {
-        const date = new Date(item.date).getTime()
+      const lastTitle = stuffsCompleted.find((stuff) => {
+        const date = new Date(stuff.date).getTime()
         if (date === lastInput) {
-          return item.title
+          return stuff.title
         }
       })
 
@@ -153,9 +158,12 @@ export function Dashboard() {
 
   function getDateLastEntry() {
     if (currentStatusStuffDatabase.length > 0) {
+      const stuffsCompleted = currentStatusStuffDatabase.filter((stuff) => {
+        return stuff.discerned === false && stuff.completed === false
+      })
       const lastInput = Math.max.apply(
         Math,
-        currentStatusStuffDatabase.map((item) => new Date(item.date).getTime())
+        stuffsCompleted.map((stuff) => new Date(stuff.date).getTime())
       )
 
       return format(new Date(lastInput), "dd/MM/yy - HH:mm")
@@ -173,10 +181,114 @@ export function Dashboard() {
 
     setStuffs(entranceStuffs)
 
+    setIsLoading(false)
+
     console.log({ entranceStuffs })
   }
 
-  const now = format(new Date(), "dd/MM/yy - HH:mm")
+  function gettingStuffsDiscerned() {
+    if (currentStatusStuffDatabase.length > 0) {
+      const discernedStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+        return stuff.discerned === true && stuff.completed === false
+      })
+      return discernedStuffs.length.toString()
+    } else {
+      return "There is nothing..."
+    }
+  }
+  const discernedStuffsTotal = gettingStuffsDiscerned()
+
+  function getTitleLastDiscerned() {
+    if (currentStatusStuffDatabase.length > 0) {
+      const stuffsDiscerned = currentStatusStuffDatabase.filter((stuff) => {
+        return stuff.discerned === true && stuff.completed === false
+      })
+      const lastInput = Math.max.apply(
+        Math,
+        stuffsDiscerned.map((stuff) => new Date(stuff.date).getTime())
+      )
+      const lastTitleOfDiscerned = stuffsDiscerned.find((stuff) => {
+        const date = new Date(stuff.date).getTime()
+        if (date === lastInput) {
+          return stuff.title
+        }
+      })
+
+      return lastTitleOfDiscerned!.title
+    } else {
+      return "to discern "
+    }
+  }
+  const lastTitleOfDiscerned = getTitleLastDiscerned()
+
+  function getDateLastDiscerned() {
+    if (currentStatusStuffDatabase.length > 0) {
+      const stuffsDiscerned = currentStatusStuffDatabase.filter((stuff) => {
+        return stuff.discerned === true && stuff.completed === false
+      })
+      const lastInput = Math.max.apply(
+        Math,
+        stuffsDiscerned.map((stuff) => new Date(stuff.date).getTime())
+      )
+
+      return format(new Date(lastInput), "dd/MM/yy - HH:mm")
+    } else {
+      return "here."
+    }
+  }
+  const lastDateDiscerned = getDateLastDiscerned()
+
+  function gettingStuffsCompleted() {
+    if (currentStatusStuffDatabase.length > 0) {
+      const completedStuffs = formattedStatusStuffDatabase.filter((stuff) => {
+        return stuff.discerned === true && stuff.completed === true
+      })
+      return completedStuffs.length.toString()
+    } else {
+      return "There is nothing..."
+    }
+  }
+  const completedStuffsTotal = gettingStuffsCompleted()
+
+  function getTitleLastCompleted() {
+    if (currentStatusStuffDatabase.length > 0) {
+      const stuffsCompleted = currentStatusStuffDatabase.filter((stuff) => {
+        return stuff.completed
+      })
+      const lastInput = Math.max.apply(
+        Math,
+        stuffsCompleted.map((stuff) => new Date(stuff.date).getTime())
+      )
+      const lastTitleOfCompleted = stuffsCompleted.find((stuff) => {
+        const date = new Date(stuff.date).getTime()
+        if (date === lastInput) {
+          return stuff.title
+        }
+      })
+
+      return lastTitleOfCompleted!.title
+    } else {
+      return "to discern "
+    }
+  }
+  const lastTitleOfCompleted = getTitleLastCompleted()
+
+  function getDateLastCompleted() {
+    if (currentStatusStuffDatabase.length > 0) {
+      const stuffsCompleted = currentStatusStuffDatabase.filter((stuff) => {
+        return stuff.completed
+      })
+      const lastInput = Math.max.apply(
+        Math,
+        stuffsCompleted.map((stuff) => new Date(stuff.date).getTime())
+      )
+
+      return format(new Date(lastInput), "dd/MM/yy - HH:mm")
+    } else {
+      return "here."
+    }
+  }
+  const lastDateCompleted = getDateLastCompleted()
 
   useEffect(() => {
     console.log("useEffect")
@@ -230,16 +342,16 @@ export function Dashboard() {
             <HighlightCard
               type="demand"
               title="Demands"
-              amount="95"
-              lastInput="Study pointers"
-              lastTitle="1"
+              amount={discernedStuffsTotal}
+              lastInput={lastDateDiscerned}
+              lastTitle={lastTitleOfDiscerned}
             />
             <HighlightCard
               type="done"
               title="Concluded"
-              amount="37"
-              lastInput="Talk to Ellon"
-              lastTitle="2"
+              amount={completedStuffsTotal}
+              lastInput={lastDateCompleted}
+              lastTitle={lastTitleOfCompleted}
             />
           </HighlightCards>
 

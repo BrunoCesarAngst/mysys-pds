@@ -1,6 +1,6 @@
 import create from "zustand"
 
-export type formattedStuffDb = {
+type FormattedStuffDb = {
   id: string
   title: string
   description: string
@@ -20,15 +20,15 @@ export type formattedStuffDb = {
 }
 
 type Store = {
-  stuffFormatted: formattedStuffDb[]
-  formattedDatabaseStuffInTheState: (stuffFormatted: formattedStuffDb[]) => void
+  stuffFormatted: FormattedStuffDb[]
+  formattedDatabaseStuffInTheState: (stuffFormatted: FormattedStuffDb[]) => void
 }
 
 const useStuffStoreFormatted = create<Store>(
   (set): Store => ({
     stuffFormatted: [],
 
-    formattedDatabaseStuffInTheState: (stuffFormatted: formattedStuffDb[]) =>
+    formattedDatabaseStuffInTheState: (stuffFormatted: FormattedStuffDb[]) =>
       set((state) => ({
         ...state,
         stuffFormatted,
@@ -36,4 +36,4 @@ const useStuffStoreFormatted = create<Store>(
   })
 )
 
-export default useStuffStoreFormatted
+export { useStuffStoreFormatted, FormattedStuffDb }
