@@ -1,15 +1,21 @@
 {
   "expo": {
     "name": "mysys",
+    "icon": "./assets/mysys-2.png",
     "slug": "mysys",
+    "ios": {
+      "bundleIdentifier": "com.mysys",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.mysys",
+      "versionCode": 1
+    },
     "scheme": "mysys",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
-    ],
-    "android": {
-      "package": "com.mbcangst.mysys"
-    }
+    ]
   },
   "name": "mysys"
 }

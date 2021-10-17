@@ -59,9 +59,7 @@ export function SignIn() {
             muito simples
           </Title>
         </TitleWrapper>
-        <SignInTitle>
-          Faça seu login com {"\n"} uma das contas a baixo
-        </SignInTitle>
+        <SignInTitle>Faça seu login {"\n"} agora mesmo</SignInTitle>
       </Header>
       <Footer>
         <FooterWrapper>
